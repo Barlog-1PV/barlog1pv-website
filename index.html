@@ -800,13 +800,41 @@
 
         function t() { return isFr ? lang.fr : lang.en; }
 
+        let i = 0;
+        let timer;
+
+        function typeWriter(text) {
+            const element = document.getElementById("tagline");
+            
+            if (i < text.length) {
+                element.innerHTML += text.charAt(i);
+                i++;
+                // On stocke le timeout dans une variable pour garder le contrôle
+                timer = setTimeout(() => typeWriter(text), 60);
+            }
+        }
+
+        // 3. La fonction pour lancer l'affichage
+        function updateLanguage(currentLang) {
+            // On réinitialise tout avant de commencer
+            i = 0;
+            clearTimeout(timer); 
+            document.getElementById("tagline").innerHTML = ""; 
+            
+            // On récupère le texte selon la langue choisie
+            const textToType = lang[currentLang].tagline;
+            
+            // On lance la machine !
+            typeWriter(textToType);
+        }
+
         const statusDot = document.getElementById('statusDot');
         const statusText = document.getElementById('statusText');
 
         function applyLang() {
             const l = t();
             document.documentElement.lang = isFr ? 'fr' : 'en';
-            document.getElementById('tagline').textContent = l.tagline;
+            updateLanguage(isFr ? 'fr' : 'en');
             document.getElementById('bio1').innerHTML = l.bio1;
             document.getElementById('bio2').innerHTML = l.bio2;
             document.getElementById('ctaText').textContent = l.cta;
