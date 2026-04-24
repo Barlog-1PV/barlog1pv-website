@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>404 — Barlog.1PV</title>
+
+    <link rel="icon" type="image/png" sizes="32x32" href="favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="favicon-16x16.png">
+    <link rel="icon" href="favicon.ico">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600&family=Syne:wght@700;800&display=swap" rel="stylesheet">
+
+    <style>
+        *, *::before, *::after {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --bg: #09090b;
+            --text: #e4e4e7;
+            --text-dim: #71717a;
+            --text-mid: #a1a1aa;
+            --accent: #a78bfa;
+            --accent-glow: rgba(167, 139, 250, 0.15);
+        }
+
+        html { height: 100%; }
+
+        body {
+            font-family: 'Outfit', sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .glow {
+            position: fixed;
+            width: 500px;
+            height: 500px;
+            border-radius: 50%;
+            background: radial-gradient(circle, var(--accent-glow) 0%, transparent 70%);
+            top: 45%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 0;
+            animation: breathe 6s ease-in-out infinite;
+        }
+
+        @keyframes breathe {
+            0%, 100% { opacity: 0.3; transform: translate(-50%, -50%) scale(1); }
+            50% { opacity: 0.6; transform: translate(-50%, -50%) scale(1.15); }
+        }
+
+        .container {
+            position: relative;
+            z-index: 1;
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 1.2rem;
+        }
+
+        .code {
+            font-family: 'Syne', sans-serif;
+            font-weight: 800;
+            font-size: clamp(5rem, 20vw, 10rem);
+            letter-spacing: -0.03em;
+            line-height: 1;
+            background: linear-gradient(135deg, var(--text) 0%, var(--accent) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            opacity: 0;
+            animation: fadeUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) 0.2s forwards;
+        }
+
+        .message {
+            font-size: 1.1rem;
+            font-weight: 300;
+            color: var(--text-dim);
+            opacity: 0;
+            animation: fadeUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) 0.5s forwards;
+        }
+
+        .subtext {
+            font-size: 0.85rem;
+            font-weight: 300;
+            color: var(--text-mid);
+            opacity: 0;
+            animation: fadeUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) 0.7s forwards;
+            max-width: 380px;
+            line-height: 1.6;
+        }
+
+        .back-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-top: 0.8rem;
+            padding: 0.7rem 1.6rem;
+            border-radius: 100px;
+            border: 1px solid rgba(167, 139, 250, 0.25);
+            background: rgba(167, 139, 250, 0.08);
+            color: var(--accent);
+            font-family: 'Outfit', sans-serif;
+            font-size: 0.9rem;
+            font-weight: 400;
+            text-decoration: none;
+            cursor: pointer;
+            transition: all 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+            opacity: 0;
+            animation: fadeUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) 0.9s forwards;
+        }
+
+        .back-link:hover {
+            border-color: rgba(167, 139, 250, 0.5);
+            background: rgba(167, 139, 250, 0.14);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 30px rgba(167, 139, 250, 0.15);
+        }
+
+        @keyframes fadeUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .footer {
+            position: fixed;
+            bottom: 1.5rem;
+            font-size: 0.7rem;
+            color: var(--text-dim);
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+            z-index: 1;
+            opacity: 0;
+            animation: fadeUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) 1.2s forwards;
+        }
+    </style>
+</head>
+<body>
+    <div class="glow"></div>
+
+    <div class="container">
+        <div class="code" id="errorCode">404</div>
+        <p class="message" id="errorMsg"></p>
+        <p class="subtext" id="errorSub"></p>
+        <a href="/" class="back-link" id="backLink"></a>
+    </div>
+
+    <div class="footer">barlog1pv.fr</div>
+
+    <script>
+        // meme systeme de langue que le site principal
+        const savedLang = localStorage.getItem('barlog_lang');
+        const isFr = savedLang ? savedLang === 'fr' : (navigator.language || 'en').startsWith('fr');
+
+        if (isFr) {
+            document.getElementById('errorMsg').textContent = 'Cette page n\'existe pas.';
+            document.getElementById('errorSub').textContent = 'T\'es sûrement perdu, y\'a rien ici. Mais t\'inquiète, ça arrive même aux meilleurs.';
+            document.getElementById('backLink').textContent = '← Retour à l\'accueil';
+        } else {
+            document.documentElement.lang = 'en';
+            document.getElementById('errorMsg').textContent = 'This page doesn\'t exist.';
+            document.getElementById('errorSub').textContent = 'You\'re probably lost, there\'s nothing here. But don\'t worry, it happens to the best of us.';
+            document.getElementById('backLink').textContent = '← Back to home';
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,644 @@
+<!DOCTYPE html>
+<html lang="fr" id="html">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Safe Space — Barlog.1PV</title>
+
+    <meta name="description" content="Un endroit sûr pour partager ce que tu as sur le cœur.">
+    <meta name="theme-color" content="#a78bfa">
+
+    <link rel="icon" type="image/png" sizes="32x32" href="favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="favicon-16x16.png">
+    <link rel="icon" href="favicon.ico">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600&family=Syne:wght@700;800&display=swap"
+        rel="stylesheet">
+
+    <style>
+        *,
+        *::before,
+        *::after {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --bg: #09090b;
+            --surface: #13131a;
+            --text: #e4e4e7;
+            --text-dim: #71717a;
+            --text-mid: #a1a1aa;
+            --accent: #a78bfa;
+            --accent-glow: rgba(167, 139, 250, 0.1);
+        }
+
+        body {
+            font-family: 'Outfit', sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            padding: 2rem 1.5rem;
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        #particles {
+            position: fixed;
+            inset: 0;
+            z-index: 0;
+            pointer-events: none;
+        }
+
+        body::after {
+            content: '';
+            position: fixed;
+            inset: 0;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.03'/%3E%3C/svg%3E");
+            pointer-events: none;
+            z-index: 1;
+            opacity: 0.05;
+        }
+
+        .glow {
+            position: fixed;
+            width: 800px;
+            height: 800px;
+            border-radius: 50%;
+            background: radial-gradient(circle, var(--accent-glow) 0%, transparent 70%);
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 0;
+            animation: breathe 10s ease-in-out infinite;
+        }
+
+        @keyframes breathe {
+
+            0%,
+            100% {
+                opacity: 0.3;
+                transform: translate(-50%, -50%) scale(1);
+            }
+
+            50% {
+                opacity: 0.5;
+                transform: translate(-50%, -50%) scale(1.1);
+            }
+        }
+
+        .container {
+            position: relative;
+            z-index: 2;
+            width: 100%;
+            max-width: 600px;
+            text-align: center;
+            animation: fadeIn 0.8s ease-out;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .header {
+            margin-bottom: 2.5rem;
+        }
+
+        .title {
+            font-family: 'Syne', sans-serif;
+            font-weight: 800;
+            font-size: clamp(2rem, 8vw, 3.5rem);
+            background: linear-gradient(135deg, var(--text) 0%, var(--accent) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 1rem;
+        }
+
+        .description {
+            font-size: 1.05rem;
+            font-weight: 300;
+            color: var(--text-mid);
+            line-height: 1.6;
+            margin-bottom: 2rem;
+        }
+
+        .form-card {
+            background: rgba(19, 19, 26, 0.6);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(167, 139, 250, 0.1);
+            border-radius: 24px;
+            padding: 2rem;
+            text-align: left;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-group label {
+            display: block;
+            font-size: 0.9rem;
+            font-weight: 500;
+            color: var(--text-dim);
+            margin-bottom: 0.6rem;
+            padding-left: 0.5rem;
+        }
+
+        textarea {
+            width: 100%;
+            min-height: 180px;
+            background: rgba(9, 9, 11, 0.4);
+            border: 1px solid rgba(167, 139, 250, 0.1);
+            border-radius: 16px;
+            padding: 1rem;
+            color: var(--text);
+            font-family: 'Outfit', sans-serif;
+            font-size: 1rem;
+            font-weight: 300;
+            line-height: 1.6;
+            resize: vertical;
+            outline: none;
+            transition: all 0.3s;
+        }
+
+        textarea:focus {
+            border-color: rgba(167, 139, 250, 0.4);
+            background: rgba(9, 9, 11, 0.6);
+            box-shadow: 0 0 20px rgba(167, 139, 250, 0.05);
+        }
+
+        input[type="text"] {
+            width: 100%;
+            background: rgba(9, 9, 11, 0.4);
+            border: 1px solid rgba(167, 139, 250, 0.1);
+            border-radius: 12px;
+            padding: 0.8rem 1rem;
+            color: var(--text);
+            font-family: 'Outfit', sans-serif;
+            font-size: 1rem;
+            font-weight: 300;
+            outline: none;
+            transition: all 0.3s;
+        }
+
+        input[type="text"]:focus {
+            border-color: rgba(167, 139, 250, 0.4);
+            background: rgba(9, 9, 11, 0.6);
+            box-shadow: 0 0 20px rgba(167, 139, 250, 0.05);
+        }
+
+        .file-upload {
+            position: relative;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            padding: 0.8rem 1rem;
+            background: rgba(9, 9, 11, 0.4);
+            border: 1px dashed rgba(167, 139, 250, 0.2);
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .file-upload:hover {
+            border-color: rgba(167, 139, 250, 0.4);
+            background: rgba(167, 139, 250, 0.03);
+        }
+
+        .file-upload input {
+            position: absolute;
+            inset: 0;
+            opacity: 0;
+            cursor: pointer;
+        }
+
+        .file-info {
+            font-size: 0.85rem;
+            color: var(--text-dim);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        .file-info svg {
+            width: 18px;
+            height: 18px;
+            flex-shrink: 0;
+        }
+
+        .submit-btn {
+            width: 100%;
+            padding: 1rem;
+            border-radius: 14px;
+            border: none;
+            background: var(--accent);
+            color: #09090b;
+            font-family: 'Outfit', sans-serif;
+            font-weight: 600;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.6rem;
+            margin-top: 0.5rem;
+        }
+
+        .submit-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 30px rgba(167, 139, 250, 0.3);
+            opacity: 0.9;
+        }
+
+        .submit-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .back-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-top: 2rem;
+            color: var(--text-dim);
+            text-decoration: none;
+            font-size: 0.9rem;
+            transition: color 0.3s;
+        }
+
+        .back-link:hover {
+            color: var(--accent);
+        }
+
+        .status-msg {
+            margin-top: 1rem;
+            font-size: 0.9rem;
+            padding: 0.8rem;
+            border-radius: 10px;
+            display: none;
+            animation: slideUp 0.3s ease-out;
+        }
+
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(5px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .status-msg.success {
+            display: block;
+            background: rgba(34, 197, 94, 0.1);
+            color: #22c55e;
+            border: 1px solid rgba(34, 197, 94, 0.2);
+        }
+
+        .status-msg.error {
+            display: block;
+            background: rgba(239, 68, 68, 0.1);
+            color: #ef4444;
+            border: 1px solid rgba(239, 68, 68, 0.2);
+        }
+
+        .lang-switch {
+            position: fixed;
+            bottom: 1.5rem;
+            right: 1.8rem;
+            display: flex;
+            align-items: center;
+            gap: 0.4rem;
+            font-size: 0.75rem;
+            font-weight: 400;
+            color: var(--text-dim);
+            z-index: 10;
+            cursor: pointer;
+            padding: 0.4rem 0.8rem;
+            border-radius: 100px;
+            border: 1px solid rgba(167, 139, 250, 0.1);
+            background: rgba(167, 139, 250, 0.03);
+            transition: all 0.3s;
+        }
+
+        .lang-switch:hover {
+            border-color: rgba(167, 139, 250, 0.3);
+            background: rgba(167, 139, 250, 0.08);
+            color: var(--accent);
+        }
+
+        .active-lang {
+            color: var(--accent);
+            font-weight: 500;
+        }
+
+        @media (max-width: 480px) {
+            .form-card {
+                padding: 1.5rem;
+            }
+
+            .title {
+                font-size: 2.5rem;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <canvas id="particles"></canvas>
+    <div class="glow"></div>
+
+    <div class="container" id="content">
+        <div class="header">
+            <h1 class="title" id="title">Safe Space</h1>
+            <p class="description" id="desc"></p>
+        </div>
+
+        <div class="form-card">
+            <form id="safeForm">
+                <div class="form-group">
+                    <label for="pseudo" id="labelPseudo"></label>
+                    <input type="text" id="pseudo" placeholder="Ex: Jules Verne">
+                </div>
+
+                <div class="form-group">
+                    <label for="message" id="labelMsg"></label>
+                    <textarea id="message" required placeholder="..."></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label id="labelFile"></label>
+                    <div class="file-upload">
+                        <input type="file" id="fileInput" accept="*/*">
+                        <div class="file-info" id="fileInfo">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M17 8l-5-5-5 5M12 3v12" />
+                            </svg>
+                            <span id="fileText">Choisir un fichier (max 8Mo)</span>
+                        </div>
+                    </div>
+                </div>
+
+                <button type="submit" class="submit-btn" id="submitBtn">
+                    <span id="btnText">Envoyer le message</span>
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
+                        stroke-linecap="round" stroke-linejoin="round">
+                        <line x1="22" y1="2" x2="11" y2="13"></line>
+                        <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
+                    </svg>
+                </button>
+
+                <div id="status" class="status-msg"></div>
+            </form>
+        </div>
+
+        <a href="index.html" class="back-link">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                stroke-linecap="round" stroke-linejoin="round">
+                <line x1="19" y1="12" x2="5" y2="12"></line>
+                <polyline points="12 19 5 12 12 5"></polyline>
+            </svg>
+            <span id="backText">Retour à l'accueil</span>
+        </a>
+    </div>
+
+    <div class="lang-switch" id="langSwitch">
+        <span id="langFr">FR</span>
+        <span>|</span>
+        <span id="langEn">EN</span>
+    </div>
+
+    <script>
+        const WEBHOOK_URL = '/.netlify/functions/webhook'; // Redirige vers la fonction sécurisée sur le serveur Netlify
+
+        const savedLang = localStorage.getItem('barlog_lang');
+        let isFr = savedLang ? savedLang === 'fr' : (navigator.language || 'en').startsWith('fr');
+
+        const lang = {
+            fr: {
+                title: 'Safe Space',
+                desc: 'C\'est un endroit safe où tu peux dire ce que tu veux : une bonne nouvelle, ton chagrin ou qu\'importe. Cela ne sera lu que par moi, <strong>Barlog.1PV</strong>.',
+                labelPseudo: 'Ton pseudo (optionnel)',
+                labelMsg: 'Ton message',
+                labelFile: 'Un fichier ? (optionnel, max 8Mo)',
+                fileText: 'Choisir un fichier',
+                btnText: 'Envoyer',
+                backText: 'Retour à l\'accueil',
+                sending: 'Envoi en cours...',
+                success: 'Message envoyé avec succès. Merci d\'avoir partagé ça avec moi. ❤️',
+                error: 'Une erreur est survenue lors de l\'envoi. Réessaie plus tard.',
+                fileTooBig: 'Le fichier est trop lourd (max 8Mo).',
+                noWebhook: 'Erreur: L\'URL du Webhook n\'est pas configurée.',
+                anonymous: 'Anonyme'
+            },
+            en: {
+                title: 'Safe Space',
+                desc: 'This is a safe place where you can say whatever you want: good news, your grief, or anything else. This will only be read by me, <strong>Barlog.1PV</strong>.',
+                labelPseudo: 'Your pseudo (optional)',
+                labelMsg: 'Your message',
+                labelFile: 'A file? (optional, max 8MB)',
+                fileText: 'Choose a file',
+                btnText: 'Send',
+                backText: 'Back to home',
+                sending: 'Sending...',
+                success: 'Message sent successfully. Thank you for sharing this with me. ❤️',
+                error: 'An error occurred while sending. Please try again later.',
+                fileTooBig: 'File is too large (max 8MB).',
+                noWebhook: 'Error: Webhook URL is not configured.',
+                anonymous: 'Anonymous'
+            }
+        };
+
+        function updateLang() {
+            const l = isFr ? lang.fr : lang.en;
+            document.getElementById('title').textContent = l.title;
+            document.getElementById('desc').innerHTML = l.desc;
+            document.getElementById('labelPseudo').textContent = l.labelPseudo;
+            document.getElementById('labelMsg').textContent = l.labelMsg;
+            document.getElementById('labelFile').textContent = l.labelFile;
+            document.getElementById('btnText').textContent = l.btnText;
+            document.getElementById('backText').textContent = l.backText;
+            document.getElementById('langFr').className = isFr ? 'active-lang' : '';
+            document.getElementById('langEn').className = isFr ? '' : 'active-lang';
+            document.getElementById('html').lang = isFr ? 'fr' : 'en';
+
+            const fileInput = document.getElementById('fileInput');
+            if (!fileInput.files.length) {
+                document.getElementById('fileText').textContent = l.fileText + ' (max 8Mo)';
+            }
+        }
+
+        document.getElementById('langSwitch').addEventListener('click', () => {
+            isFr = !isFr;
+            localStorage.setItem('barlog_lang', isFr ? 'fr' : 'en');
+            updateLang();
+        });
+
+        document.getElementById('fileInput').addEventListener('change', (e) => {
+            const file = e.target.files[0];
+            const text = document.getElementById('fileText');
+            if (file) {
+                if (file.size > 8 * 1024 * 1024) {
+                    text.textContent = isFr ? lang.fr.fileTooBig : lang.en.fileTooBig;
+                    text.style.color = '#ef4444';
+                    e.target.value = '';
+                } else {
+                    text.textContent = file.name;
+                    text.style.color = 'var(--accent)';
+                }
+            } else {
+                text.textContent = (isFr ? lang.fr.fileText : lang.en.fileText) + ' (max 8Mo)';
+                text.style.color = 'var(--text-dim)';
+            }
+        });
+
+        const form = document.getElementById('safeForm');
+        const status = document.getElementById('status');
+        const submitBtn = document.getElementById('submitBtn');
+
+        form.addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            const l = isFr ? lang.fr : lang.en;
+            const pseudo = document.getElementById('pseudo').value || l.anonymous;
+            const message = document.getElementById('message').value;
+            const fileInput = document.getElementById('fileInput');
+            const file = fileInput.files[0];
+
+            if (WEBHOOK_URL === 'YOUR_DISCORD_WEBHOOK_URL') {
+                status.textContent = l.noWebhook;
+                status.className = 'status-msg error';
+                return;
+            }
+
+            submitBtn.disabled = true;
+            document.getElementById('btnText').textContent = l.sending;
+            status.style.display = 'none';
+
+            try {
+                const formData = new FormData();
+
+                // On prépare le contenu pour Discord
+                const payload = {
+                    embeds: [{
+                        author: { name: pseudo },
+                        title: isFr ? "Nouveau message" : "New message",
+                        description: message,
+                        color: 0xa78bfa,
+                        timestamp: new Date().toISOString(),
+                        footer: { text: "Safe Space — barlog1pv.fr" }
+                    }]
+                };
+
+                formData.append('payload_json', JSON.stringify(payload));
+
+                if (file) {
+                    formData.append('file', file);
+                }
+
+                const response = await fetch(WEBHOOK_URL, {
+                    method: 'POST',
+                    body: formData
+                });
+
+                if (response.ok) {
+                    status.textContent = l.success;
+                    status.className = 'status-msg success';
+                    form.reset();
+                    document.getElementById('fileText').textContent = l.fileText + ' (max 8Mo)';
+                    document.getElementById('fileText').style.color = 'var(--text-dim)';
+                } else {
+                    throw new Error();
+                }
+            } catch (err) {
+                status.textContent = l.error;
+                status.className = 'status-msg error';
+            } finally {
+                submitBtn.disabled = false;
+                document.getElementById('btnText').textContent = l.btnText;
+            }
+        });
+
+        // Particules simples pour le fond
+        const canvas = document.getElementById('particles');
+        const ctx = canvas.getContext('2d');
+        let particles = [];
+
+        function resize() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        }
+
+        class Particle {
+            constructor() {
+                this.x = Math.random() * canvas.width;
+                this.y = Math.random() * canvas.height;
+                this.size = Math.random() * 2 + 0.5;
+                this.speedX = Math.random() * 0.2 - 0.1;
+                this.speedY = Math.random() * 0.2 - 0.1;
+                this.opacity = Math.random() * 0.5;
+            }
+            update() {
+                this.x += this.speedX;
+                this.y += this.speedY;
+                if (this.x < 0 || this.x > canvas.width) this.speedX *= -1;
+                if (this.y < 0 || this.y > canvas.height) this.speedY *= -1;
+            }
+            draw() {
+                ctx.fillStyle = `rgba(167, 139, 250, ${this.opacity})`;
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+                ctx.fill();
+            }
+        }
+
+        function init() {
+            particles = [];
+            for (let i = 0; i < 50; i++) particles.push(new Particle());
+        }
+
+        function animate() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            particles.forEach(p => {
+                p.update();
+                p.draw();
+            });
+            requestAnimationFrame(animate);
+        }
+
+        window.addEventListener('resize', resize);
+        resize();
+        init();
+        animate();
+        updateLang();
+    </script>
+</body>
+
+</html>

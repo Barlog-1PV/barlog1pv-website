@@ -1,0 +1,464 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin — Barlog.1PV</title>
+
+    <link rel="icon" type="image/png" sizes="32x32" href="favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="favicon-16x16.png">
+    <link rel="icon" href="favicon.ico">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600&family=Syne:wght@700;800&display=swap"
+        rel="stylesheet">
+
+    <style>
+        *,
+        *::before,
+        *::after {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --bg: #09090b;
+            --text: #e4e4e7;
+            --text-dim: #71717a;
+            --text-mid: #a1a1aa;
+            --accent: #a78bfa;
+            --accent-glow: rgba(167, 139, 250, 0.15);
+            --red: #ef4444;
+        }
+
+        html {
+            height: 100%;
+        }
+
+        body {
+            font-family: 'Outfit', sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            overflow: hidden;
+        }
+
+        .glow {
+            position: fixed;
+            width: 500px;
+            height: 500px;
+            border-radius: 50%;
+            background: radial-gradient(circle, var(--accent-glow) 0%, transparent 70%);
+            top: 45%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 0;
+            animation: breathe 6s ease-in-out infinite;
+        }
+
+        @keyframes breathe {
+
+            0%,
+            100% {
+                opacity: 0.3;
+                transform: translate(-50%, -50%) scale(1);
+            }
+
+            50% {
+                opacity: 0.6;
+                transform: translate(-50%, -50%) scale(1.15);
+            }
+        }
+
+        /* login */
+        .login-box {
+            position: relative;
+            z-index: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 1.2rem;
+            padding: 2.5rem 2rem;
+            border: 1px solid rgba(167, 139, 250, 0.12);
+            background: rgba(167, 139, 250, 0.04);
+            border-radius: 20px;
+            width: 340px;
+            max-width: 90vw;
+            transition: opacity 0.5s, transform 0.5s;
+        }
+
+        .login-box.hidden {
+            opacity: 0;
+            transform: scale(0.95);
+            pointer-events: none;
+        }
+
+        .login-title {
+            font-family: 'Syne', sans-serif;
+            font-weight: 800;
+            font-size: 1.5rem;
+            background: linear-gradient(135deg, var(--text) 0%, var(--accent) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .login-subtitle {
+            font-size: 0.85rem;
+            color: var(--text-dim);
+            font-weight: 300;
+        }
+
+        .input-field {
+            width: 100%;
+            padding: 0.7rem 1rem;
+            border-radius: 10px;
+            border: 1px solid rgba(167, 139, 250, 0.15);
+            background: rgba(167, 139, 250, 0.04);
+            color: var(--text);
+            font-family: 'Outfit', sans-serif;
+            font-size: 0.9rem;
+            font-weight: 300;
+            outline: none;
+            transition: border-color 0.3s;
+        }
+
+        .input-field::placeholder {
+            color: var(--text-dim);
+        }
+
+        .input-field:focus {
+            border-color: rgba(167, 139, 250, 0.4);
+        }
+
+        .login-btn {
+            width: 100%;
+            padding: 0.75rem;
+            border-radius: 10px;
+            border: 1px solid rgba(167, 139, 250, 0.25);
+            background: rgba(167, 139, 250, 0.1);
+            color: var(--accent);
+            font-family: 'Outfit', sans-serif;
+            font-size: 0.9rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .login-btn:hover {
+            background: rgba(167, 139, 250, 0.2);
+            transform: translateY(-1px);
+        }
+
+        .error-msg {
+            font-size: 0.8rem;
+            color: var(--red);
+            height: 1rem;
+            transition: opacity 0.3s;
+        }
+
+        /* loading fake */
+        .loading-screen {
+            position: fixed;
+            inset: 0;
+            z-index: 10;
+            background: var(--bg);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 1.5rem;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.4s;
+        }
+
+        .loading-screen.active {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        .spinner {
+            width: 40px;
+            height: 40px;
+            border: 3px solid rgba(167, 139, 250, 0.15);
+            border-top-color: var(--accent);
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+        }
+
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        .loading-text {
+            font-size: 0.9rem;
+            color: var(--text-dim);
+            font-weight: 300;
+        }
+
+        /* troll reveal */
+        .troll-screen {
+            position: fixed;
+            inset: 0;
+            z-index: 20;
+            background: var(--bg);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 1.5rem;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.5s;
+            padding: 2rem;
+        }
+
+        .troll-screen.active {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        .troll-emoji {
+            font-size: 5rem;
+            animation: trollBounce 0.6s ease-in-out infinite alternate;
+        }
+
+        @keyframes trollBounce {
+            from {
+                transform: translateY(0) rotate(-5deg);
+            }
+
+            to {
+                transform: translateY(-15px) rotate(5deg);
+            }
+        }
+
+        .troll-title {
+            font-family: 'Syne', sans-serif;
+            font-weight: 800;
+            font-size: clamp(1.5rem, 5vw, 2.5rem);
+            text-align: center;
+            background: linear-gradient(135deg, var(--accent) 0%, #c4b5fd 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .troll-sub {
+            font-size: 1rem;
+            color: var(--text-dim);
+            font-weight: 300;
+            text-align: center;
+            max-width: 400px;
+            line-height: 1.6;
+        }
+
+        .troll-ip {
+            font-size: 0.75rem;
+            color: var(--text-dim);
+            font-weight: 300;
+            opacity: 0.5;
+            font-family: monospace;
+        }
+
+        .troll-back {
+            margin-top: 1rem;
+            padding: 0.7rem 1.6rem;
+            border-radius: 100px;
+            border: 1px solid rgba(167, 139, 250, 0.25);
+            background: rgba(167, 139, 250, 0.08);
+            color: var(--accent);
+            font-family: 'Outfit', sans-serif;
+            font-size: 0.9rem;
+            text-decoration: none;
+            transition: all 0.3s;
+        }
+
+        .troll-back:hover {
+            background: rgba(167, 139, 250, 0.14);
+            transform: translateY(-2px);
+        }
+
+        .attempt-counter {
+            position: fixed;
+            bottom: 1.5rem;
+            right: 1.8rem;
+            font-size: 0.7rem;
+            color: var(--text-dim);
+            z-index: 5;
+            opacity: 0.4;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="glow"></div>
+
+    <!-- fake login -->
+    <div class="login-box" id="loginBox">
+        <div class="login-title">Admin Panel</div>
+        <div class="login-subtitle">Authorized personnel only.</div>
+        <input type="text" class="input-field" id="username" placeholder="Username" autocomplete="off">
+        <input type="password" class="input-field" id="password" placeholder="Password" autocomplete="off">
+        <div class="error-msg" id="errorMsg">&nbsp;</div>
+        <button class="login-btn" id="loginBtn">Sign In</button>
+    </div>
+
+    <!-- fake loading -->
+    <div class="loading-screen" id="loadingScreen">
+        <div class="spinner"></div>
+        <div class="loading-text" id="loadingText">Authenticating...</div>
+    </div>
+
+    <!-- troll -->
+    <div class="troll-screen" id="trollScreen">
+        <div class="troll-emoji">🤡</div>
+        <div class="troll-title" id="trollTitle"></div>
+        <div class="troll-sub" id="trollSub"></div>
+        <div class="troll-ip" id="trollIp"></div>
+        <a href="/" class="troll-back" id="trollBack"></a>
+    </div>
+
+    <div class="attempt-counter" id="attemptCounter"></div>
+
+    <script>
+        let attempts = 0;
+
+        const errorMessages = [
+            "Nope.",
+            "Still nope.",
+            "You really thought?",
+            "Bro give up.",
+            "There's nothing here lmao.",
+            "You're wasting your time.",
+            "I can do this all day.",
+            "admin/admin? Really?",
+            "Try harder. Or don't.",
+            "🤡"
+        ];
+
+        const loadingMessages = [
+            "Authenticating...",
+            "Checking credentials...",
+            "Verifying access level...",
+            "Contacting server...",
+            "Almost there...",
+            "Hacking the mainframe...",
+            "Downloading more RAM..."
+        ];
+
+        const loginBtn = document.getElementById('loginBtn');
+        const loginBox = document.getElementById('loginBox');
+        const errorMsg = document.getElementById('errorMsg');
+        const loadingScreen = document.getElementById('loadingScreen');
+        const loadingText = document.getElementById('loadingText');
+        const trollScreen = document.getElementById('trollScreen');
+        const attemptCounter = document.getElementById('attemptCounter');
+
+        function updateCounter() {
+            attemptCounter.textContent = `Attempts: ${attempts}`;
+        }
+
+        // fake ip pour faire flipper
+        function fakeIp() {
+            const a = Math.floor(Math.random() * 255);
+            const b = Math.floor(Math.random() * 255);
+            const c = Math.floor(Math.random() * 255);
+            const d = Math.floor(Math.random() * 255);
+            return `${a}.${b}.${c}.${d}`;
+        }
+
+        function showTroll() {
+            loginBox.classList.add('hidden');
+            loadingScreen.classList.add('active');
+
+            // fake loading avec messages qui changent
+            let msgIndex = 0;
+            const msgInterval = setInterval(() => {
+                msgIndex++;
+                loadingText.textContent = loadingMessages[Math.min(msgIndex, loadingMessages.length - 1)];
+            }, 600);
+
+            setTimeout(() => {
+                clearInterval(msgInterval);
+                loadingScreen.classList.remove('active');
+
+                setTimeout(() => {
+                    trollScreen.classList.add('active');
+
+                    const savedLang = localStorage.getItem('barlog_lang');
+                    const isFr = savedLang ? savedLang === 'fr' : (navigator.language || 'en').startsWith('fr');
+
+                    if (isFr) {
+                        document.getElementById('trollTitle').textContent = "T'as vraiment essayé ?";
+                        document.getElementById('trollSub').textContent = "Y'a pas de panel admin mon gars. C'est un site perso tout simple. Tu t'attendais à quoi exactement ?";
+                        document.getElementById('trollBack').textContent = "← Ok j'ai compris";
+                    } else {
+                        document.getElementById('trollTitle').textContent = "You actually tried?";
+                        document.getElementById('trollSub').textContent = "There's no admin panel dude. It's a one-page personal site. What exactly were you expecting?";
+                        document.getElementById('trollBack').textContent = "← Ok I get it";
+                    }
+
+                    document.getElementById('trollIp').textContent = `Your IP: ${fakeIp()} (just kidding... or am I?)`;
+                }, 300);
+            }, 3500);
+        }
+
+        function handleLogin() {
+            attempts++;
+            updateCounter();
+
+            // au bout de 3 essais on troll
+            if (attempts >= 3) {
+                showTroll();
+                return;
+            }
+
+            const msg = errorMessages[Math.min(attempts - 1, errorMessages.length - 1)];
+            errorMsg.textContent = msg;
+            errorMsg.style.opacity = '1';
+
+            // shake le formulaire
+            loginBox.style.animation = 'shake 0.4s ease';
+            setTimeout(() => { loginBox.style.animation = ''; }, 400);
+
+            // vider les champs
+            document.getElementById('password').value = '';
+        }
+
+        loginBtn.addEventListener('click', handleLogin);
+
+        // enter pour valider
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter' && !trollScreen.classList.contains('active')) {
+                handleLogin();
+            }
+        });
+
+        // shake animation
+        const style = document.createElement('style');
+        style.textContent = `
+            @keyframes shake {
+                0%, 100% { transform: translateX(0); }
+                20% { transform: translateX(-8px); }
+                40% { transform: translateX(8px); }
+                60% { transform: translateX(-5px); }
+                80% { transform: translateX(5px); }
+            }
+        `;
+        document.head.appendChild(style);
+    </script>
+</body>
+
+</html>

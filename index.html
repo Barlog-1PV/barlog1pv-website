@@ -1,0 +1,1104 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Barlog.1PV</title>
+
+    <meta name="description"
+        content="Barlog.1PV — Dev autodidacte de 19 ans. Bots Discord, sites web, applis mobiles. Passionné d'aéronautique militaire et d'aéronavale.">
+    <meta name="theme-color" content="#a78bfa">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://barlog1pv.fr">
+    <meta property="og:title" content="Barlog.1PV">
+    <meta property="og:description"
+        content="Dev autodidacte, curieux de tout. Bots Discord, sites web, applis mobiles & plus.">
+    <meta property="og:image" content="https://barlog1pv.fr/android-chrome-512x512.png">
+    <meta name="twitter:card" content="summary">
+    <meta name="twitter:title" content="Barlog.1PV">
+    <meta name="twitter:description" content="Dev autodidacte, curieux de tout.">
+
+    <link rel="icon" type="image/png" sizes="32x32" href="favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="favicon-16x16.png">
+    <link rel="icon" href="favicon.ico">
+    <link rel="apple-touch-icon" sizes="192x192" href="android-chrome-192x192.png">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600&family=Syne:wght@700;800&display=swap"
+        rel="stylesheet">
+
+    <style>
+        *,
+        *::before,
+        *::after {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --bg: #09090b;
+            --surface: #13131a;
+            --text: #e4e4e7;
+            --text-dim: #71717a;
+            --text-mid: #a1a1aa;
+            --accent: #a78bfa;
+            --accent-glow: rgba(167, 139, 250, 0.15);
+            --skel-bg: #1a1a24;
+            --skel-shine: #252533;
+        }
+
+        html {
+            height: 100%;
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: 'Outfit', sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            position: relative;
+            overflow-x: hidden;
+            padding: 2rem 1.5rem;
+        }
+
+        #particles {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 0;
+        }
+
+        body::after {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.03'/%3E%3C/svg%3E");
+            pointer-events: none;
+            z-index: 1;
+            opacity: 0.05;
+        }
+
+        .glow {
+            position: fixed;
+            width: 600px;
+            height: 600px;
+            border-radius: 50%;
+            background: radial-gradient(circle, var(--accent-glow) 0%, transparent 70%);
+            top: 40%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 0;
+            animation: breathe 6s ease-in-out infinite;
+        }
+
+        @keyframes breathe {
+
+            0%,
+            100% {
+                opacity: 0.4;
+                transform: translate(-50%, -50%) scale(1);
+            }
+
+            50% {
+                opacity: 0.7;
+                transform: translate(-50%, -50%) scale(1.15);
+            }
+        }
+
+        .skeleton-loader {
+            position: fixed;
+            inset: 0;
+            z-index: 200;
+            background: var(--bg);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 1.5rem;
+            transition: opacity 0.5s ease, visibility 0.5s ease;
+        }
+
+        .skeleton-loader.hidden {
+            opacity: 0;
+            visibility: hidden;
+        }
+
+        .skel {
+            background: var(--skel-bg);
+            border-radius: 8px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .skel::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, var(--skel-shine), transparent);
+            animation: shimmer 1.5s infinite;
+        }
+
+        @keyframes shimmer {
+            to {
+                left: 100%;
+            }
+        }
+
+        .page-content {
+            opacity: 0;
+            transition: opacity 0.6s ease;
+        }
+
+        .page-content.visible {
+            opacity: 1;
+        }
+
+        .clock {
+            position: fixed;
+            top: 1.5rem;
+            right: 1.8rem;
+            font-size: 0.8rem;
+            font-weight: 300;
+            color: var(--text-dim);
+            letter-spacing: 0.06em;
+            z-index: 10;
+        }
+
+        .status {
+            position: fixed;
+            top: 1.5rem;
+            left: 1.8rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 1rem;
+            font-weight: 300;
+            color: var(--text-dim);
+            z-index: 10;
+        }
+
+        .status-dot {
+            width: 11px;
+            height: 11px;
+            border-radius: 50%;
+            background: #71717a;
+            transition: background 0.5s, box-shadow 0.5s;
+        }
+
+        .status-dot.online {
+            background: #22c55e;
+            box-shadow: 0 0 11px rgba(34, 197, 94, 0.5);
+        }
+
+        .status-dot.idle {
+            background: #f59e0b;
+            box-shadow: 0 0 11px rgba(245, 158, 11, 0.5);
+        }
+
+        .status-dot.dnd {
+            background: #ef4444;
+            box-shadow: 0 0 11px rgba(239, 68, 68, 0.5);
+        }
+
+        .container {
+            position: relative;
+            z-index: 2;
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 1.5rem;
+            max-width: 520px;
+        }
+
+        .name {
+            font-family: 'Syne', sans-serif;
+            font-weight: 800;
+            font-size: clamp(2.8rem, 10vw, 5.5rem);
+            letter-spacing: -0.03em;
+            line-height: 1.3;
+            padding: 0.1em 0;
+            background: linear-gradient(135deg, var(--text) 0%, var(--accent) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .name .suffix {
+            background: linear-gradient(135deg, var(--accent) 0%, #c4b5fd 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .tagline {
+            font-size: 1.05rem;
+            font-weight: 300;
+            color: var(--text-dim);
+            letter-spacing: 0.04em;
+        }
+
+        .line {
+            width: 120px;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, var(--accent), transparent);
+        }
+
+        .bio {
+            display: flex;
+            flex-direction: column;
+            gap: 0.9rem;
+        }
+
+        .bio p {
+            font-size: 0.95rem;
+            font-weight: 300;
+            color: var(--text-mid);
+            line-height: 1.7;
+        }
+
+        .bio strong {
+            color: var(--text);
+            font-weight: 500;
+        }
+
+        .bio .highlight {
+            color: var(--accent);
+            font-weight: 400;
+        }
+
+        .cta-box {
+            border: 1px solid rgba(167, 139, 250, 0.12);
+            background: rgba(167, 139, 250, 0.04);
+            border-radius: 16px;
+            padding: 1.3rem 1.8rem;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 1rem;
+            width: 100%;
+        }
+
+        .cta-box p {
+            font-size: 0.9rem;
+            color: var(--text-mid);
+            font-weight: 300;
+            line-height: 1.6;
+        }
+
+        .discord-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.6rem;
+            padding: 0.7rem 1.6rem;
+            border-radius: 100px;
+            border: 1px solid rgba(167, 139, 250, 0.25);
+            background: rgba(167, 139, 250, 0.08);
+            color: var(--accent);
+            font-size: 0.9rem;
+            font-weight: 400;
+            letter-spacing: 0.03em;
+            text-decoration: none;
+            cursor: pointer;
+            transition: all 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .discord-link::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            border-radius: inherit;
+            background: radial-gradient(circle at center, var(--accent-glow), transparent 70%);
+            opacity: 0;
+            transition: opacity 0.35s;
+        }
+
+        .discord-link:hover {
+            border-color: rgba(167, 139, 250, 0.5);
+            background: rgba(167, 139, 250, 0.14);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 30px rgba(167, 139, 250, 0.15);
+        }
+
+        .discord-link:hover::before {
+            opacity: 1;
+        }
+
+        .discord-link svg {
+            width: 18px;
+            height: 18px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .discord-link span {
+            position: relative;
+            z-index: 1;
+        }
+
+        .safe-space-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.6rem;
+            padding: 0.5rem 1.2rem;
+            border-radius: 100px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            background: rgba(255, 255, 255, 0.03);
+            color: var(--text-mid);
+            text-decoration: none;
+            font-size: 0.8rem;
+            transition: all 0.3s;
+        }
+
+        .safe-space-link:hover {
+            border-color: #9a74e0;
+            color: #9a74e0;
+            background: rgba(244, 114, 182, 0.05);
+        }
+
+        .safe-space-link svg {
+            width: 12px;
+            height: 12px;
+        }
+
+        .footer {
+            position: relative;
+            margin-top: 3rem;
+            font-size: 0.7rem;
+            color: var(--text-dim);
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+            z-index: 2;
+        }
+
+        .rafale-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 3;
+            overflow: hidden;
+        }
+
+        .rafale {
+            position: absolute;
+            width: 140px;
+            animation: flyAcross 40s linear infinite;
+            opacity: 0;
+            filter: brightness(0) invert(1) sepia(1) saturate(5) hue-rotate(230deg) brightness(0.6) opacity(0.15);
+            transform: rotate(-12deg);
+            pointer-events: auto;
+            cursor: pointer;
+        }
+
+        @keyframes flyAcross {
+            0% {
+                left: -200px;
+                top: 80%;
+                opacity: 0;
+            }
+
+            3% {
+                opacity: 1;
+            }
+
+            97% {
+                opacity: 1;
+            }
+
+            100% {
+                left: calc(100% + 200px);
+                top: 8%;
+                opacity: 0;
+            }
+        }
+
+        .flare {
+            position: fixed;
+            width: 4px;
+            height: 4px;
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: 3;
+            animation: flareFall 1.5s ease-out forwards;
+        }
+
+        @keyframes flareFall {
+            0% {
+                opacity: 1;
+                transform: translate(0, 0) scale(1);
+            }
+
+            30% {
+                opacity: 0.9;
+            }
+
+            100% {
+                opacity: 0;
+                transform: translate(var(--dx), 120px) scale(0.2);
+            }
+        }
+
+        .konami-overlay {
+            position: fixed;
+            inset: 0;
+            z-index: 100;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(9, 9, 11, 0.95);
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.5s;
+        }
+
+        .konami-overlay.active {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        .konami-text {
+            font-family: 'Syne', sans-serif;
+            font-size: clamp(1.5rem, 5vw, 3rem);
+            font-weight: 800;
+            text-align: center;
+            color: var(--accent);
+            animation: konamiPulse 2s ease-in-out infinite;
+        }
+
+        .konami-text .sub {
+            display: block;
+            font-family: 'Outfit', sans-serif;
+            font-size: 0.9rem;
+            font-weight: 300;
+            color: var(--text-dim);
+            margin-top: 1rem;
+            animation: none;
+        }
+
+        @keyframes konamiPulse {
+
+            0%,
+            100% {
+                text-shadow: 0 0 20px rgba(167, 139, 250, 0.3);
+            }
+
+            50% {
+                text-shadow: 0 0 40px rgba(167, 139, 250, 0.6), 0 0 80px rgba(167, 139, 250, 0.2);
+            }
+        }
+
+        .activity {
+            position: fixed;
+            bottom: 1.5rem;
+            left: 1.8rem;
+            display: flex;
+            align-items: center;
+            gap: 0.7rem;
+            font-size: 0.8rem;
+            font-weight: 300;
+            color: var(--text-dim);
+            z-index: 10;
+            padding: 0.6rem 1rem;
+            border: 1px solid rgba(167, 139, 250, 0.08);
+            background: rgba(167, 139, 250, 0.03);
+            border-radius: 10px;
+            opacity: 0;
+            transform: translateY(10px);
+            transition: opacity 0.5s, transform 0.5s;
+            max-width: 320px;
+        }
+
+        .activity.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .activity-icon {
+            width: 36px;
+            height: 36px;
+            flex-shrink: 0;
+            border-radius: 8px;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(167, 139, 250, 0.08);
+            font-size: 1.1rem;
+        }
+
+        .activity-icon img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .activity-info {
+            display: flex;
+            flex-direction: column;
+            gap: 0.15rem;
+            overflow: hidden;
+        }
+
+        .activity-name {
+            color: var(--text);
+            font-weight: 500;
+            font-size: 0.8rem;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .activity-details,
+        .activity-state {
+            font-size: 0.72rem;
+            color: var(--text-dim);
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .activity-time {
+            font-size: 0.68rem;
+            color: var(--accent);
+            opacity: 0.7;
+        }
+
+        .lang-switch {
+            position: fixed;
+            bottom: 1.5rem;
+            right: 1.8rem;
+            display: flex;
+            align-items: center;
+            gap: 0.4rem;
+            font-size: 0.75rem;
+            font-weight: 400;
+            color: var(--text-dim);
+            z-index: 10;
+            cursor: pointer;
+            padding: 0.4rem 0.8rem;
+            border-radius: 100px;
+            border: 1px solid rgba(167, 139, 250, 0.1);
+            background: rgba(167, 139, 250, 0.03);
+            transition: all 0.3s;
+            user-select: none;
+        }
+
+        .lang-switch:hover {
+            border-color: rgba(167, 139, 250, 0.3);
+            background: rgba(167, 139, 250, 0.08);
+            color: var(--accent);
+        }
+
+        .lang-switch .active-lang {
+            color: var(--accent);
+            font-weight: 500;
+        }
+
+        @media (max-width: 480px) {
+            .cta-box {
+                padding: 1rem 1.2rem;
+            }
+
+            .clock {
+                top: 1rem;
+                right: 1rem;
+            }
+
+            .status {
+                top: 1rem;
+                left: 1rem;
+            }
+
+            .activity {
+                bottom: 1rem;
+                left: 1rem;
+                right: 1rem;
+                max-width: none;
+            }
+
+            .lang-switch {
+                bottom: 1rem;
+                right: 1rem;
+            }
+
+            .rafale {
+                width: 90px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- skeleton -->
+    <div class="skeleton-loader" id="skeletonLoader">
+        <div style="position: fixed; top: 1.5rem; left: 1.8rem; display: flex; align-items: center; gap: 0.5rem;">
+            <div class="skel" style="width: 8px; height: 8px; border-radius: 50%;"></div>
+            <div class="skel" style="width: 60px; height: 12px;"></div>
+        </div>
+        <div style="position: fixed; top: 1.5rem; right: 1.8rem;">
+            <div class="skel" style="width: 65px; height: 12px;"></div>
+        </div>
+        <div
+            style="display: flex; flex-direction: column; align-items: center; gap: 1.5rem; max-width: 520px; width: 100%; padding: 0 1.5rem;">
+            <div class="skel" style="width: min(340px, 70vw); height: clamp(46px, 10vw, 72px); border-radius: 12px;">
+            </div>
+            <div class="skel" style="width: 240px; height: 14px;"></div>
+            <div class="skel" style="width: 120px; height: 1px; border-radius: 0;"></div>
+            <div style="display: flex; flex-direction: column; gap: 0.4rem; width: 100%; align-items: center;">
+                <div class="skel" style="width: 100%; height: 12px;"></div>
+                <div class="skel" style="width: 95%; height: 12px;"></div>
+                <div class="skel" style="width: 80%; height: 12px;"></div>
+            </div>
+            <div style="display: flex; flex-direction: column; gap: 0.4rem; width: 100%; align-items: center;">
+                <div class="skel" style="width: 100%; height: 12px;"></div>
+                <div class="skel" style="width: 70%; height: 12px;"></div>
+            </div>
+            <div class="skel" style="width: 100%; height: 120px; border-radius: 16px;"></div>
+        </div>
+        <div style="margin-top: 1.5rem;">
+            <div class="skel" style="width: 90px; height: 10px;"></div>
+        </div>
+        <div style="position: fixed; bottom: 1.5rem; right: 1.8rem;">
+            <div class="skel" style="width: 60px; height: 24px; border-radius: 100px;"></div>
+        </div>
+    </div>
+
+    <!-- contenu -->
+    <div class="page-content" id="pageContent">
+        <canvas id="particles"></canvas>
+        <div class="glow"></div>
+        <div class="clock" id="clock"></div>
+
+        <div class="status">
+            <div class="status-dot" id="statusDot"></div>
+            <span id="statusText"></span>
+        </div>
+
+        <div class="container">
+            <h1 class="name">Barlog<span class="suffix">.1PV</span></h1>
+            <p class="tagline" id="tagline"></p>
+            <div class="line"></div>
+            <div class="bio">
+                <p id="bio1"></p>
+                <p id="bio2"></p>
+            </div>
+            <div class="cta-box">
+                <p id="ctaText"></p>
+                <a href="https://discord.com/users/538342327387684865" target="_blank" rel="noopener"
+                    class="discord-link">
+                    <svg viewBox="0 0 24 24" fill="currentColor">
+                        <path
+                            d="M20.317 4.37a19.791 19.791 0 0 0-4.885-1.515.074.074 0 0 0-.079.037c-.21.375-.444.864-.608 1.25a18.27 18.27 0 0 0-5.487 0 12.64 12.64 0 0 0-.617-1.25.077.077 0 0 0-.079-.037A19.736 19.736 0 0 0 3.677 4.37a.07.07 0 0 0-.032.027C.533 9.046-.32 13.58.099 18.057a.082.082 0 0 0 .031.057 19.9 19.9 0 0 0 5.993 3.03.078.078 0 0 0 .084-.028 14.09 14.09 0 0 0 1.226-1.994.076.076 0 0 0-.041-.106 13.107 13.107 0 0 1-1.872-.892.077.077 0 0 1-.008-.128 10.2 10.2 0 0 0 .372-.292.074.074 0 0 1 .077-.01c3.928 1.793 8.18 1.793 12.062 0a.074.074 0 0 1 .078.01c.12.098.246.198.373.292a.077.077 0 0 1-.006.127 12.299 12.299 0 0 1-1.873.892.077.077 0 0 0-.041.107c.36.698.772 1.362 1.225 1.993a.076.076 0 0 0 .084.028 19.839 19.839 0 0 0 6.002-3.03.077.077 0 0 0 .032-.054c.5-5.177-.838-9.674-3.549-13.66a.061.061 0 0 0-.031-.03zM8.02 15.33c-1.183 0-2.157-1.085-2.157-2.419 0-1.333.956-2.419 2.157-2.419 1.21 0 2.176 1.096 2.157 2.42 0 1.333-.956 2.418-2.157 2.418zm7.975 0c-1.183 0-2.157-1.085-2.157-2.419 0-1.333.955-2.419 2.157-2.419 1.21 0 2.176 1.096 2.157 2.42 0 1.333-.946 2.418-2.157 2.418z" />
+                    </svg>
+                    <span id="discordBtn"></span>
+                </a>
+                <a href="safe.html" class="safe-space-link">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
+                    </svg>
+                    <span id="safeSpaceLink"></span>
+                </a>
+            </div>
+        </div>
+
+        <div class="footer">barlog1pv.fr</div>
+
+        <div class="activity" id="activity">
+            <div class="activity-icon" id="activityIcon">🎮</div>
+            <div class="activity-info">
+                <div class="activity-name" id="activityName"></div>
+                <div class="activity-details" id="activityDetails"></div>
+                <div class="activity-state" id="activityState"></div>
+                <div class="activity-time" id="activityTime"></div>
+            </div>
+        </div>
+
+        <div class="lang-switch" id="langSwitch" title="Switch language">
+            <span id="langFr">FR</span>
+            <span>|</span>
+            <span id="langEn">EN</span>
+        </div>
+
+        <div class="rafale-container">
+            <img class="rafale" id="rafale" src="rafale.png" alt="">
+        </div>
+
+        <div class="konami-overlay" id="konamiOverlay">
+            <div class="konami-text" id="konamiText"></div>
+        </div>
+    </div>
+
+    <script>
+        // lol
+        console.log('%c👀 Hey, what are you doing here?', 'font-size: 24px; font-weight: bold; color: #a78bfa');
+        console.log('%cThis is my personal space, not yours.', 'font-size: 14px; color: #71717a');
+        console.log('%cBut since you\'re already here... nice inspect skills. 🤝', 'font-size: 14px; color: #71717a');
+        console.log('%cNow close this and go touch some grass.', 'font-size: 14px; color: #71717a');
+        console.log('%c— Barlog.1PV', 'font-size: 12px; color: #a78bfa; font-style: italic');
+
+        // age auto, plus besoin de changer chaque annee
+        function getAge() {
+            const birthday = new Date(2006, 7, 17); // 17 aout
+            const today = new Date();
+            let age = today.getFullYear() - birthday.getFullYear();
+            const m = today.getMonth() - birthday.getMonth();
+            if (m < 0 || (m === 0 && today.getDate() < birthday.getDate())) age--;
+            return age;
+        }
+
+        // langue auto ou sauvegardee
+        const savedLang = localStorage.getItem('barlog_lang');
+        let isFr = savedLang ? savedLang === 'fr' : (navigator.language || 'en').startsWith('fr');
+
+        const lang = {
+            fr: {
+                tagline: 'Dev autodidacte, curieux de tout.',
+                bio1: `J'ai <strong>${getAge()} ans</strong> et je code par passion depuis plusieurs années. Bots Discord, applis mobiles, sites web, IA en local — j'aime <span class="highlight">toucher à tout</span> et apprendre en construisant.`,
+                bio2: `En dehors du code, je suis passionné d'aéronautique militaire — et tout particulièrement d'aéronavale. VTTiste débutant sur les sentiers du coin. Catholique, et curieux de tout ce qui m'entoure.`,
+                cta: `Un projet en tête ? Une idée de bot, de site, ou n'importe quoi d'autre ? Ça me dérange pas du tout de bosser sur des projets pour d'autres. Si ça t'intéresse, viens me parler !`,
+                discordBtn: 'Me contacter sur Discord',
+                safeSpace: 'Safe Space',
+                status: { online: 'En ligne', idle: 'Parti toucher de l\'herbe', dnd: 'Indisponible (sauf pour un gros chèque)', offline: '404 : Présence introuvable' },
+                elapsed: (h, m) => h > 0 ? `depuis ${h}h${String(m).padStart(2, '0')}` : `depuis ${m}min`,
+                konami: `🛩️ BRAVO ZULU 🛩️<span class="sub">Tu connais le Konami Code ? T'es un vrai.<br>Clique n'importe où pour fermer.</span>`
+            },
+            en: {
+                tagline: 'Self-taught dev, curious about everything.',
+                bio1: `I'm <strong>${getAge()} years old</strong> and I've been coding out of passion for several years. Discord bots, mobile apps, websites, local AI — I love <span class="highlight">getting my hands on everything</span> and learning by building.`,
+                bio2: `Outside of coding, I'm passionate about military aviation — especially naval aviation. Beginner mountain biker on the local trails. Catholic, and curious about everything around me.`,
+                cta: `Got a project in mind? An idea for a bot, a website, or anything else? I'm always happy to work on projects for others. If you're interested, hit me up!`,
+                discordBtn: 'Contact me on Discord',
+                safeSpace: 'Safe Space',
+                status: { online: 'Online', idle: 'Went out to touch some grass', dnd: 'Not available (except for money)', offline: '404: Presence not found' },
+                elapsed: (h, m) => h > 0 ? `for ${h}h${String(m).padStart(2, '0')}` : `for ${m}min`,
+                konami: `🛩️ BRAVO ZULU 🛩️<span class="sub">You know the Konami Code? Respect.<br>Click anywhere to close.</span>`
+            }
+        };
+
+        function t() { return isFr ? lang.fr : lang.en; }
+
+        const statusDot = document.getElementById('statusDot');
+        const statusText = document.getElementById('statusText');
+
+        function applyLang() {
+            const l = t();
+            document.documentElement.lang = isFr ? 'fr' : 'en';
+            document.getElementById('tagline').textContent = l.tagline;
+            document.getElementById('bio1').innerHTML = l.bio1;
+            document.getElementById('bio2').innerHTML = l.bio2;
+            document.getElementById('ctaText').textContent = l.cta;
+            document.getElementById('discordBtn').textContent = l.discordBtn;
+            document.getElementById('safeSpaceLink').textContent = l.safeSpace;
+            document.getElementById('konamiText').innerHTML = l.konami;
+
+            const cls = statusDot.className;
+            if (cls.includes('online')) statusText.textContent = l.status.online;
+            else if (cls.includes('idle')) statusText.textContent = l.status.idle;
+            else if (cls.includes('dnd')) statusText.textContent = l.status.dnd;
+            else statusText.textContent = l.status.offline;
+
+            document.getElementById('langFr').className = isFr ? 'active-lang' : '';
+            document.getElementById('langEn').className = isFr ? '' : 'active-lang';
+            localStorage.setItem('barlog_lang', isFr ? 'fr' : 'en');
+        }
+
+        document.getElementById('langSwitch').addEventListener('click', () => {
+            isFr = !isFr;
+            applyLang();
+            if (lastActivityData) updateActivity(lastActivityData);
+        });
+
+        applyLang();
+
+        // skeleton -> page
+        const skeleton = document.getElementById('skeletonLoader');
+        const page = document.getElementById('pageContent');
+
+        function reveal() {
+            skeleton.classList.add('hidden');
+            page.classList.add('visible');
+        }
+
+        if (document.fonts && document.fonts.ready) {
+            document.fonts.ready.then(() => setTimeout(reveal, 400));
+        } else {
+            window.addEventListener('load', () => setTimeout(reveal, 400));
+        }
+        setTimeout(reveal, 3000); // au cas ou
+
+        // horloge
+        const clockEl = document.getElementById('clock');
+
+        function updateClock() {
+            const now = new Date();
+            const h = String(now.getHours()).padStart(2, '0');
+            const m = String(now.getMinutes()).padStart(2, '0');
+            const s = String(now.getSeconds()).padStart(2, '0');
+            clockEl.textContent = `${h}:${m}:${s}`;
+        }
+
+        updateClock();
+        setInterval(updateClock, 1000);
+
+        // lanyard api
+        const DISCORD_ID = '538342327387684865';
+        const activityEl = document.getElementById('activity');
+        const activityIcon = document.getElementById('activityIcon');
+        const activityName = document.getElementById('activityName');
+        const activityDetails = document.getElementById('activityDetails');
+        const activityState = document.getElementById('activityState');
+        const activityTime = document.getElementById('activityTime');
+
+        function getActivityImg(activity) {
+            const img = activity.assets?.large_image;
+            if (!img) return null;
+            if (img.startsWith('mp:')) return `https://media.discordapp.net/${img.slice(3)}`;
+            if (activity.application_id) return `https://cdn.discordapp.com/app-assets/${activity.application_id}/${img}.png`;
+            return null;
+        }
+
+        function setIcon(activity) {
+            const url = getActivityImg(activity);
+            if (url) {
+                activityIcon.innerHTML = `<img src="${url}" alt="" onerror="this.parentElement.textContent='🎮'">`;
+            } else {
+                const icons = { 'Visual Studio Code': '💻', 'Code': '💻' };
+                activityIcon.textContent = icons[activity.name] || '🎮';
+            }
+        }
+
+        function elapsed(start) {
+            const diff = Date.now() - start;
+            const mins = Math.floor(diff / 60000);
+            const hrs = Math.floor(mins / 60);
+            return t().elapsed(hrs, mins % 60);
+        }
+
+        function updateActivity(data) {
+            const activity = data.activities?.find(a => a.type !== 4 && a.type !== 2);
+            if (!activity) {
+                activityEl.classList.remove('visible');
+                return;
+            }
+
+            setIcon(activity);
+            activityName.textContent = activity.name || '';
+            activityDetails.textContent = activity.details || '';
+            activityState.textContent = activity.state || '';
+            activityTime.textContent = activity.timestamps?.start ? elapsed(activity.timestamps.start) : '';
+            activityEl.classList.add('visible');
+        }
+
+        let lastActivityData = null;
+        setInterval(() => { if (lastActivityData) updateActivity(lastActivityData); }, 60000);
+
+        async function fetchStatus() {
+            try {
+                const res = await fetch(`https://api.lanyard.rest/v1/users/${DISCORD_ID}`);
+                const data = await res.json();
+                if (data.success) {
+                    const status = data.data.discord_status || 'offline';
+                    statusDot.className = 'status-dot ' + (status === 'offline' ? '' : status);
+                    statusText.textContent = t().status[status] || t().status.offline;
+                    lastActivityData = data.data;
+                    updateActivity(data.data);
+                }
+            } catch (err) {
+                statusText.textContent = t().status.offline;
+                activityEl.classList.remove('visible');
+            }
+        }
+
+        fetchStatus();
+        setInterval(fetchStatus, 30000);
+
+        // particules
+        const canvas = document.getElementById('particles');
+        const ctx = canvas.getContext('2d');
+        let particles = [];
+        let mouse = { x: null, y: null };
+
+        function resize() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        }
+
+        resize();
+        window.addEventListener('resize', resize);
+        window.addEventListener('mousemove', (e) => { mouse.x = e.clientX; mouse.y = e.clientY; });
+
+        class Particle {
+            constructor() { this.reset(); }
+
+            reset() {
+                this.x = Math.random() * canvas.width;
+                this.y = Math.random() * canvas.height;
+                this.size = Math.random() * 1.5 + 0.5;
+                this.vx = (Math.random() - 0.5) * 0.3;
+                this.vy = (Math.random() - 0.5) * 0.3;
+                this.opacity = Math.random() * 0.4 + 0.1;
+                this.baseOpacity = this.opacity;
+            }
+
+            update() {
+                this.x += this.vx;
+                this.y += this.vy;
+
+                if (mouse.x !== null) {
+                    const dx = this.x - mouse.x;
+                    const dy = this.y - mouse.y;
+                    const dist = Math.sqrt(dx * dx + dy * dy);
+
+                    if (dist < 150) {
+                        const force = (150 - dist) / 150;
+                        this.x += (dx / dist) * force * 1.5;
+                        this.y += (dy / dist) * force * 1.5;
+                        this.opacity = Math.min(this.baseOpacity + force * 0.4, 0.8);
+                    } else {
+                        this.opacity += (this.baseOpacity - this.opacity) * 0.05;
+                    }
+                }
+
+                if (this.x < 0) this.x = canvas.width;
+                if (this.x > canvas.width) this.x = 0;
+                if (this.y < 0) this.y = canvas.height;
+                if (this.y > canvas.height) this.y = 0;
+            }
+
+            draw() {
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+                ctx.fillStyle = `rgba(167, 139, 250, ${this.opacity})`;
+                ctx.fill();
+            }
+        }
+
+        const particleCount = Math.min(80, Math.floor(canvas.width * canvas.height / 15000));
+        for (let i = 0; i < particleCount; i++) particles.push(new Particle());
+
+        function drawConnections() {
+            for (let i = 0; i < particles.length; i++) {
+                for (let j = i + 1; j < particles.length; j++) {
+                    const dx = particles[i].x - particles[j].x;
+                    const dy = particles[i].y - particles[j].y;
+                    const dist = Math.sqrt(dx * dx + dy * dy);
+
+                    if (dist < 120) {
+                        ctx.beginPath();
+                        ctx.moveTo(particles[i].x, particles[i].y);
+                        ctx.lineTo(particles[j].x, particles[j].y);
+                        ctx.strokeStyle = `rgba(167, 139, 250, ${(1 - dist / 120) * 0.08})`;
+                        ctx.lineWidth = 0.5;
+                        ctx.stroke();
+                    }
+                }
+            }
+        }
+
+        function animateParticles() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            particles.forEach(p => { p.update(); p.draw(); });
+            drawConnections();
+            requestAnimationFrame(animateParticles);
+        }
+
+        animateParticles();
+
+        // flares
+        const flareColors = [
+            'rgba(255, 200, 50, 0.9)',
+            'rgba(255, 160, 30, 0.85)',
+            'rgba(255, 240, 180, 0.95)',
+            'rgba(255, 120, 20, 0.8)',
+            'rgba(167, 139, 250, 0.7)'
+        ];
+
+        function spawnFlares(x, y, count, spread, maxSize) {
+            for (let i = 0; i < count; i++) {
+                const flare = document.createElement('div');
+                flare.classList.add('flare');
+                const color = flareColors[Math.floor(Math.random() * flareColors.length)];
+                const dx = (Math.random() - 0.5) * spread;
+                const size = Math.random() * maxSize + 2;
+                flare.style.cssText = `
+                    left: ${x + (Math.random() - 0.5) * 40}px;
+                    top: ${y + (Math.random() - 0.5) * 20}px;
+                    width: ${size}px;
+                    height: ${size}px;
+                    background: ${color};
+                    box-shadow: 0 0 ${size * 2}px ${color};
+                    --dx: ${dx}px;
+                `;
+                document.body.appendChild(flare);
+                setTimeout(() => flare.remove(), 1500);
+            }
+        }
+
+        // clic rafale = flares
+        document.getElementById('rafale').addEventListener('click', (e) => {
+            e.stopPropagation();
+            const rect = e.target.getBoundingClientRect();
+            spawnFlares(rect.left + rect.width / 2, rect.top + rect.height / 2, 12, 80, 3);
+        });
+
+        // konami code hehe
+        const konamiCode = ['ArrowUp', 'ArrowUp', 'ArrowDown', 'ArrowDown', 'ArrowLeft', 'ArrowRight', 'ArrowLeft', 'ArrowRight', 'b', 'a'];
+        let konamiProgress = 0;
+        const konamiOverlay = document.getElementById('konamiOverlay');
+
+        document.addEventListener('keydown', (e) => {
+            if (konamiOverlay.classList.contains('active')) return;
+
+            if (e.key === konamiCode[konamiProgress]) {
+                konamiProgress++;
+                if (konamiProgress === konamiCode.length) {
+                    konamiOverlay.classList.add('active');
+                    konamiProgress = 0;
+                    // pluie de flares
+                    for (let wave = 0; wave < 3; wave++) {
+                        setTimeout(() => {
+                            for (let i = 0; i < 20; i++) {
+                                spawnFlares(
+                                    Math.random() * window.innerWidth,
+                                    Math.random() * (window.innerHeight * 0.3),
+                                    1, 200, 5
+                                );
+                            }
+                        }, wave * 400);
+                    }
+                }
+            } else {
+                konamiProgress = (e.key === konamiCode[0]) ? 1 : 0;
+            }
+        });
+
+        konamiOverlay.addEventListener('click', () => {
+            konamiOverlay.classList.remove('active');
+        });
+    </script>
+</body>
+
+</html>
