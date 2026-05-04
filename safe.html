@@ -532,12 +532,6 @@
             const fileInput = document.getElementById('fileInput');
             const file = fileInput.files[0];
 
-            if (WEBHOOK_URL === 'YOUR_DISCORD_WEBHOOK_URL') {
-                status.textContent = l.noWebhook;
-                status.className = 'status-msg error';
-                return;
-            }
-
             submitBtn.disabled = true;
             document.getElementById('btnText').textContent = l.sending;
             status.style.display = 'none';
