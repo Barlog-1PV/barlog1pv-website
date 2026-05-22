@@ -616,6 +616,126 @@
             font-weight: 500;
         }
 
+        .bubbles-sidebar {
+            position: fixed;
+            left: 2rem;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 120px;
+            height: 400px;
+            z-index: 10;
+            pointer-events: none;
+        }
+
+        .float-bubble {
+            position: absolute;
+            width: 60px;
+            height: 60px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            pointer-events: auto;
+        }
+
+        .float-bubble:nth-child(1) { left: 10%; top: 10%; animation: float1 6s ease-in-out infinite alternate; }
+        .float-bubble:nth-child(2) { left: 50%; top: 30%; animation: float2 8s ease-in-out infinite alternate; }
+        .float-bubble:nth-child(3) { left: -10%; top: 50%; animation: float3 7s ease-in-out infinite alternate; }
+        .float-bubble:nth-child(4) { left: 60%; top: 70%; animation: float4 9s ease-in-out infinite alternate; }
+        .float-bubble:nth-child(5) { left: 15%; top: 90%; animation: float5 6.5s ease-in-out infinite alternate; }
+
+        @keyframes float1 { 0% { transform: translate(0, 0); } 100% { transform: translate(15px, -20px); } }
+        @keyframes float2 { 0% { transform: translate(0, 0); } 100% { transform: translate(-20px, 15px); } }
+        @keyframes float3 { 0% { transform: translate(0, 0); } 100% { transform: translate(25px, 20px); } }
+        @keyframes float4 { 0% { transform: translate(0, 0); } 100% { transform: translate(-15px, -25px); } }
+        @keyframes float5 { 0% { transform: translate(0, 0); } 100% { transform: translate(20px, -15px); } }
+
+        .float-bubble:hover {
+            animation-play-state: paused;
+            z-index: 20;
+        }
+
+        .bubble-bg {
+            position: absolute;
+            inset: 0;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+            transition: all 0.3s cubic-bezier(0.2, 0.8, 0.2, 1);
+        }
+
+        .bubble-icon {
+            width: 28px;
+            height: 28px;
+            transition: all 0.3s cubic-bezier(0.2, 0.8, 0.2, 1);
+        }
+
+        .bubble-text {
+            position: absolute;
+            font-size: 0.95rem;
+            font-weight: 700;
+            opacity: 0;
+            transform: scale(0.5);
+            transition: all 0.3s cubic-bezier(0.2, 0.8, 0.2, 1);
+            pointer-events: none;
+            white-space: nowrap;
+        }
+
+        .float-bubble:hover .bubble-bg {
+            opacity: 0;
+            transform: scale(0);
+        }
+
+        .float-bubble:hover .bubble-text {
+            opacity: 1;
+            transform: scale(1);
+        }
+
+        .bubble-particle {
+            position: absolute;
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            transform: translate(-50%, -50%) scale(0);
+            opacity: 0;
+            transition: transform 0.25s cubic-bezier(0.2, 0.8, 0.2, 1), opacity 0.25s ease;
+            pointer-events: none;
+            z-index: 5;
+        }
+
+        .float-bubble:hover .bubble-particle {
+            transform: translate(calc(-50% + var(--tx)), calc(-50% + var(--ty))) scale(var(--scale));
+            opacity: 0.8;
+            transition: transform 0.4s cubic-bezier(0.1, 0.9, 0.2, 1), opacity 0.4s ease;
+        }
+
+        @media (max-width: 1100px) {
+            .bubbles-sidebar {
+                position: static;
+                transform: none;
+                width: 100%;
+                height: auto;
+                display: flex;
+                flex-direction: row;
+                flex-wrap: wrap;
+                justify-content: center;
+                gap: 1.2rem;
+                margin: 1.5rem 0 2rem 0;
+                pointer-events: auto;
+            }
+            .float-bubble {
+                position: relative;
+                left: auto !important;
+                top: auto !important;
+                animation: none !important;
+                transform: none !important;
+            }
+        }
+
         @media (max-width: 480px) {
             .cta-box {
                 padding: 1rem 1.2rem;
@@ -705,6 +825,40 @@
                 <p id="bio1"></p>
                 <p id="bio2"></p>
             </div>
+
+            <div class="bubbles-sidebar">
+                <div class="float-bubble" data-color="#F7DF1E">
+                    <div class="bubble-bg">
+                        <img src="https://cdn.simpleicons.org/javascript/F7DF1E" alt="JavaScript" class="bubble-icon">
+                    </div>
+                    <span class="bubble-text" style="color: #F7DF1E; text-shadow: 0 0 10px rgba(247,223,30,0.4);">JavaScript</span>
+                </div>
+                <div class="float-bubble" data-color="#3776AB">
+                    <div class="bubble-bg">
+                        <img src="https://cdn.simpleicons.org/python/3776AB" alt="Python" class="bubble-icon">
+                    </div>
+                    <span class="bubble-text" style="color: #3776AB; text-shadow: 0 0 10px rgba(55,118,171,0.4);">Python</span>
+                </div>
+                <div class="float-bubble" data-color="#E34F26">
+                    <div class="bubble-bg">
+                        <img src="https://cdn.simpleicons.org/html5/E34F26" alt="HTML" class="bubble-icon">
+                    </div>
+                    <span class="bubble-text" style="color: #E34F26; text-shadow: 0 0 10px rgba(227,79,38,0.4);">HTML</span>
+                </div>
+                <div class="float-bubble" data-color="#1572B6">
+                    <div class="bubble-bg">
+                        <img src="https://cdn.simpleicons.org/css/1572B6" alt="CSS" class="bubble-icon">
+                    </div>
+                    <span class="bubble-text" style="color: #1572B6; text-shadow: 0 0 10px rgba(21,114,182,0.4);">CSS</span>
+                </div>
+                <div class="float-bubble" data-color="#e4e4e7">
+                    <div class="bubble-bg">
+                        <img src="https://cdn.simpleicons.org/json/e4e4e7" alt="JSON" class="bubble-icon">
+                    </div>
+                    <span class="bubble-text" style="color: #e4e4e7; text-shadow: 0 0 10px rgba(228,228,231,0.4);">JSON</span>
+                </div>
+            </div>
+
             <div class="cta-box">
                 <p id="ctaText"></p>
                 <a href="https://discordid.netlify.app/?id=538342327387684865" target="_blank" rel="noopener"
@@ -882,10 +1036,28 @@
 
         function updateClock() {
             const now = new Date();
-            const h = String(now.getHours()).padStart(2, '0');
-            const m = String(now.getMinutes()).padStart(2, '0');
-            const s = String(now.getSeconds()).padStart(2, '0');
-            clockEl.textContent = `${h}:${m}:${s}`;
+            
+            // Format time (HH:MM:SS) in Europe/Paris
+            const timeString = new Intl.DateTimeFormat('en-GB', {
+                timeZone: 'Europe/Paris',
+                hour: '2-digit',
+                minute: '2-digit',
+                second: '2-digit',
+                hour12: false
+            }).format(now);
+            
+            // Reliable offset calculation without Date string parsing
+            const getHour = (tz) => parseInt(new Intl.DateTimeFormat('en-US', {
+                timeZone: tz, hour: 'numeric', hourCycle: 'h23'
+            }).formatToParts(now).find(p => p.type === 'hour').value, 10);
+            
+            let offset = getHour('Europe/Paris') - getHour('UTC');
+            if (offset < -12) offset += 24;
+            if (offset > 12) offset -= 24;
+            
+            const zoneName = offset === 2 ? 'CEST' : 'CET';
+            
+            clockEl.textContent = `${timeString} ${zoneName}`;
         }
 
         updateClock();
@@ -1125,6 +1297,29 @@
 
         konamiOverlay.addEventListener('click', () => {
             konamiOverlay.classList.remove('active');
+        });
+
+        // Setup bubble particles
+        const bubbles = document.querySelectorAll('.float-bubble');
+        bubbles.forEach(bubble => {
+            for (let i = 0; i < 20; i++) {
+                const p = document.createElement('div');
+                p.className = 'bubble-particle';
+                p.style.backgroundColor = bubble.getAttribute('data-color') || 'var(--accent)';
+                p.style.left = '50%';
+                p.style.top = '50%';
+                
+                const angle = Math.random() * Math.PI * 2;
+                const dist = 35 + Math.random() * 25;
+                const tx = Math.cos(angle) * dist * 1.4;
+                const ty = Math.sin(angle) * dist * 0.8;
+                
+                p.style.setProperty('--tx', `${tx}px`);
+                p.style.setProperty('--ty', `${ty}px`);
+                p.style.setProperty('--scale', 0.5 + Math.random() * 0.8);
+                
+                bubble.appendChild(p);
+            }
         });
     </script>
 </body>
