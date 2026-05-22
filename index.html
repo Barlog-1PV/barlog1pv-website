@@ -736,31 +736,73 @@
             }
         }
 
-        @media (max-width: 480px) {
-            .cta-box {
-                padding: 1rem 1.2rem;
+        @media (max-width: 768px) {
+            body {
+                display: block;
+                padding: 1.5rem 1.2rem;
+                height: auto;
+                overflow-y: auto;
             }
 
-            .clock {
-                top: 1rem;
-                right: 1rem;
+            .page-content {
+                display: flex;
+                flex-direction: column;
+                min-height: calc(100vh - 3rem);
+                position: relative;
             }
 
             .status {
-                top: 1rem;
-                left: 1rem;
+                position: static;
+                margin-bottom: 1rem;
+                align-self: flex-start;
+            }
+
+            .clock {
+                position: absolute;
+                top: 0;
+                right: 0;
+            }
+
+            .container {
+                margin: auto 0;
+                padding: 2rem 0;
+                width: 100%;
+            }
+
+            .name {
+                font-size: clamp(3rem, 14vw, 4rem);
+            }
+
+            .bio p {
+                text-align: center;
             }
 
             .activity {
-                bottom: 1rem;
-                left: 1rem;
-                right: 1rem;
-                max-width: none;
+                position: static;
+                width: 100%;
+                max-width: 100%;
+                margin: 0 0 1.5rem 0;
+                transform: translateY(0) !important;
+                background: rgba(167, 139, 250, 0.05);
+                border-color: rgba(167, 139, 250, 0.15);
+                box-sizing: border-box;
             }
 
             .lang-switch {
-                bottom: 1rem;
-                right: 1rem;
+                position: static;
+                align-self: center;
+                margin: 0 0 1.5rem 0;
+                background: rgba(167, 139, 250, 0.05);
+            }
+
+            .cta-box {
+                flex-direction: column;
+                padding: 1.5rem;
+                text-align: center;
+            }
+
+            .cta-box a {
+                justify-content: center;
             }
 
             .rafale {
