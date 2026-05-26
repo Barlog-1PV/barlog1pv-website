@@ -175,9 +175,9 @@
             font-size: 1rem;
             font-weight: 300;
             line-height: 1.6;
-            resize: vertical;
             outline: none;
             transition: all 0.3s;
+            overflow: hidden;
         }
 
         textarea:focus {
@@ -248,6 +248,24 @@
             flex-shrink: 0;
         }
 
+        .char-counter {
+            display: block;
+            font-size: 0.78rem;
+            color: var(--text-dim);
+            text-align: right;
+            margin-top: 0.4rem;
+            padding-right: 0.5rem;
+            transition: color 0.3s;
+        }
+
+        .char-counter.warn {
+            color: #f59e0b;
+        }
+
+        .char-counter.danger {
+            color: #ef4444;
+        }
+
         .submit-btn {
             width: 100%;
             padding: 1rem;
@@ -285,10 +303,6 @@
             text-align: center;
             margin-top: 1rem;
             line-height: 1.6;
-        }
-
-        .contact-hint strong {
-            color: var(--accent);
         }
 
         .contact-hint a {
@@ -487,12 +501,13 @@
             <form id="safeForm">
                 <div class="form-group">
                     <label for="pseudo" id="labelPseudo"></label>
-                    <input type="text" id="pseudo" placeholder="Ex: Jules Verne">
+                    <input type="text" id="pseudo" placeholder="Ex: Jules Verne" maxlength="256">
                 </div>
 
                 <div class="form-group">
                     <label for="message" id="labelMsg"></label>
-                    <textarea id="message" required></textarea>
+                    <textarea id="message" required maxlength="4096"></textarea>
+                    <span class="char-counter" id="charCounter">0 / 4096</span>
                 </div>
 
                 <div class="form-group">
@@ -521,7 +536,7 @@
             </form>
         </div>
 
-        <!-- Écran de confirmation (affiché après envoi) -->
+        <!-- Écran de confirmation -->
         <div class="confirm-card" id="confirmCard">
             <div class="confirm-icon">
                 <svg viewBox="0 0 24 24" fill="none" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
@@ -577,7 +592,6 @@
                 sending: 'Envoi en cours...',
                 error: 'Une erreur est survenue lors de l\'envoi. Réessaie plus tard.',
                 fileTooBig: 'Le fichier est trop lourd (max 8Mo).',
-                noWebhook: 'Erreur: L\'URL du Webhook n\'est pas configurée.',
                 anonymous: 'Anonyme',
                 msgPlaceholder: 'Écris ce que tu veux, ça restera entre nous...',
                 contactHint: 'Si tu préfères me parler directement, tu peux me retrouver sur Discord : <a href="https://discordid.netlify.app/?id=538342327387684865" target="_blank" rel="noopener">barlog.1pv</a> - je suis de bonne écoute et tout restera entre nous. 🤍',
@@ -597,7 +611,6 @@
                 sending: 'Sending...',
                 error: 'An error occurred while sending. Please try again later.',
                 fileTooBig: 'File is too large (max 8MB).',
-                noWebhook: 'Error: Webhook URL is not configured.',
                 anonymous: 'Anonymous',
                 msgPlaceholder: 'Write whatever you want, it stays between us...',
                 contactHint: 'If you\'d rather talk directly, you can find me on Discord: <a href="https://discordid.netlify.app/?id=538342327387684865" target="_blank" rel="noopener">barlog.1pv</a> - I\'m a good listener and everything stays between us. 🤍',
@@ -655,6 +668,17 @@
             }
         });
 
+        const messageEl = document.getElementById('message');
+        const charCounter = document.getElementById('charCounter');
+
+        messageEl.addEventListener('input', function () {
+            const len = this.value.length;
+            charCounter.textContent = `${len} / 4096`;
+            charCounter.className = 'char-counter' + (len > 3800 ? ' danger' : len > 3500 ? ' warn' : '');
+            this.style.height = 'auto';
+            this.style.height = this.scrollHeight + 'px';
+        });
+
         const form = document.getElementById('safeForm');
         const status = document.getElementById('status');
         const submitBtn = document.getElementById('submitBtn');
@@ -689,7 +713,7 @@
 
             const l = isFr ? lang.fr : lang.en;
             const pseudo = document.getElementById('pseudo').value || l.anonymous;
-            const message = document.getElementById('message').value;
+            const message = messageEl.value;
             const fileInput = document.getElementById('fileInput');
             const file = fileInput.files[0];
 
@@ -724,6 +748,9 @@
 
                 if (response.ok) {
                     form.reset();
+                    messageEl.style.height = '';
+                    charCounter.textContent = '0 / 4096';
+                    charCounter.className = 'char-counter';
                     document.getElementById('fileText').textContent = l.fileText + ' (max 8Mo)';
                     document.getElementById('fileText').style.color = 'var(--text-dim)';
                     showConfirm();
