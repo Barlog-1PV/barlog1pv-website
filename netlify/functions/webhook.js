@@ -1,51 +1,68 @@
-exports.handler = async (event, context) => {
+const { Buffer } = require('buffer');
+const Busboy = require('busboy');
+
+exports.handler = async (event) => {
     if (event.httpMethod !== 'POST') {
         return { statusCode: 405, body: 'Method Not Allowed' };
     }
 
-    try {
-        const WEBHOOK_URL = process.env.DISCORD_WEBHOOK_URL;
+    const WEBHOOK_URL = process.env.DISCORD_WEBHOOK_URL;
+    if (!WEBHOOK_URL) {
+        return { statusCode: 500, body: JSON.stringify({ error: "DISCORD_WEBHOOK_URL manquant." }) };
+    }
 
-        // Sécurité si la variable est manquante sur Netlify
-        if (!WEBHOOK_URL) {
-            return {
-                statusCode: 500,
-                body: JSON.stringify({ error: "La variable DISCORD_WEBHOOK_URL n'est pas configurée sur Netlify." })
-            };
-        }
+    return new Promise((resolve) => {
+        const contentType = event.headers['content-type'] || event.headers['Content-Type'] || '';
+        const busboy = Busboy({ headers: { 'content-type': contentType } });
 
-        // On récupère le body proprement
-        const bodyContent = event.isBase64Encoded
-            ? Buffer.from(event.body, 'base64').toString('utf-8')
-            : event.body;
+        let payloadJson = null;
+        let fileBuffer = null;
+        let fileName = null;
+        let fileMime = null;
 
-        // Requête vers Discord
-        const response = await fetch(WEBHOOK_URL, {
-            method: 'POST',
-            headers: {
-                'Content-Type': event.headers['content-type'] || event.headers['Content-Type'] || 'application/json',
-            },
-            body: bodyContent
+        busboy.on('field', (name, value) => {
+            if (name === 'payload_json') payloadJson = value;
         });
 
-        // Si Discord renvoie un statut 204 (No Content), c'est une réussite totale
-        if (response.status === 204) {
-            return {
-                statusCode: 200,
-                body: JSON.stringify({ success: true })
-            };
-        }
+        busboy.on('file', (name, stream, info) => {
+            fileName = info.filename;
+            fileMime = info.mimeType;
+            const chunks = [];
+            stream.on('data', (chunk) => chunks.push(chunk));
+            stream.on('end', () => { fileBuffer = Buffer.concat(chunks); });
+        });
 
-        const data = await response.text();
-        return {
-            statusCode: response.status,
-            body: data
-        };
+        busboy.on('finish', async () => {
+            try {
+                const formData = new FormData();
+                formData.append('payload_json', payloadJson);
 
-    } catch (err) {
-        return {
-            statusCode: 500,
-            body: JSON.stringify({ error: err.message || err.toString() })
-        };
-    }
+                if (fileBuffer && fileName) {
+                    const blob = new Blob([fileBuffer], { type: fileMime });
+                    formData.append('file[0]', blob, fileName);
+                }
+
+                const response = await fetch(WEBHOOK_URL, {
+                    method: 'POST',
+                    body: formData
+                });
+
+                if (response.status === 200 || response.status === 204) {
+                    resolve({ statusCode: 200, body: JSON.stringify({ success: true }) });
+                } else {
+                    const text = await response.text();
+                    resolve({ statusCode: response.status, body: text });
+                }
+            } catch (err) {
+                resolve({ statusCode: 500, body: JSON.stringify({ error: err.message }) });
+            }
+        });
+
+        const body = event.isBase64Encoded
+            ? Buffer.from(event.body, 'base64')
+            : Buffer.from(event.body);
+
+        busboy.write(body);
+        busboy.end();
+    });
 };
