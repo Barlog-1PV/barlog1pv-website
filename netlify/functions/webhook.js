@@ -39,13 +39,15 @@ exports.handler = async (event) => {
 
                 if (fileBuffer && fileName) {
                     const blob = new Blob([fileBuffer], { type: fileMime });
-                    formData.append('file[0]', blob, fileName);
+                    formData.append('file[0]', blob, `SPOILER_${fileName}`);
                 }
 
                 const response = await fetch(WEBHOOK_URL, {
                     method: 'POST',
                     body: formData
                 });
+
+                console.log('Status:', response.status, 'OK:', response.ok);
 
                 if (response.status === 200 || response.status === 204) {
                     resolve({ statusCode: 200, body: JSON.stringify({ success: true }) });
