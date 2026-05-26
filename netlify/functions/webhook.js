@@ -47,8 +47,6 @@ exports.handler = async (event) => {
                     body: formData
                 });
 
-                console.log('Status:', response.status, 'OK:', response.ok);
-
                 if (response.status === 200 || response.status === 204) {
                     resolve({ statusCode: 200, body: JSON.stringify({ success: true }) });
                 } else {

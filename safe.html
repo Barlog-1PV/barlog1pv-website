@@ -279,6 +279,27 @@
             transform: none;
         }
 
+        .contact-hint {
+            font-size: 0.82rem;
+            color: var(--text-dim);
+            text-align: center;
+            margin-top: 1rem;
+            line-height: 1.6;
+        }
+
+        .contact-hint strong {
+            color: var(--accent);
+        }
+
+        .contact-hint a {
+            color: var(--accent);
+            text-decoration: none;
+        }
+
+        .contact-hint a:hover {
+            text-decoration: underline;
+        }
+
         .back-link {
             display: inline-flex;
             align-items: center;
@@ -414,7 +435,7 @@
                         <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
                     </svg>
                 </button>
-
+                <p class="contact-hint" id="contactHint"></p>
                 <div id="status" class="status-msg"></div>
             </form>
         </div>
@@ -457,7 +478,8 @@
                 fileTooBig: 'Le fichier est trop lourd (max 8Mo).',
                 noWebhook: 'Erreur: L\'URL du Webhook n\'est pas configurée.',
                 anonymous: 'Anonyme',
-                msgPlaceholder: 'Écris ce que tu veux, ça restera entre nous...'
+                msgPlaceholder: 'Écris ce que tu veux, ça restera entre nous...',
+                contactHint: 'Si tu préfères me parler directement, tu peux me retrouver sur Discord : <a href="https://discordid.netlify.app/?id=538342327387684865" target="_blank" rel="noopener">barlog.1pv</a> - je suis de bonne écoute et tout restera entre nous. 🤍'
             },
             en: {
                 title: 'Safe Space',
@@ -474,7 +496,8 @@
                 fileTooBig: 'File is too large (max 8MB).',
                 noWebhook: 'Error: Webhook URL is not configured.',
                 anonymous: 'Anonymous',
-                msgPlaceholder: 'Write whatever you want, it stays between us...'
+                msgPlaceholder: 'Write whatever you want, it stays between us...',
+                contactHint: 'If you\'d rather talk directly, you can find me on Discord: <a href="https://discordid.netlify.app/?id=538342327387684865" target="_blank" rel="noopener">barlog.1pv</a> - I\'m a good listener and everything stays between us. 🤍'
             }
         };
 
@@ -490,6 +513,7 @@
             document.getElementById('langFr').className = isFr ? 'active-lang' : '';
             document.getElementById('langEn').className = isFr ? '' : 'active-lang';
             document.getElementById('html').lang = isFr ? 'fr' : 'en';
+            document.getElementById('contactHint').innerHTML = l.contactHint;
 
             document.getElementById('message').placeholder = l.msgPlaceholder;
 
@@ -543,7 +567,6 @@
             try {
                 const formData = new FormData();
 
-                // On prépare le contenu pour Discord
                 const payload = {
                     embeds: [{
                         author: { name: pseudo },
