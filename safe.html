@@ -538,7 +538,7 @@
 
             submitBtn.disabled = true;
             document.getElementById('btnText').textContent = l.sending;
-            status.style.display = 'none';
+            status.className = 'status-msg';
 
             try {
                 const formData = new FormData();
