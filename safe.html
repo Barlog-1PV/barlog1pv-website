@@ -336,13 +336,6 @@
             }
         }
 
-        .status-msg.success {
-            display: block;
-            background: rgba(34, 197, 94, 0.1);
-            color: #22c55e;
-            border: 1px solid rgba(34, 197, 94, 0.2);
-        }
-
         .status-msg.error {
             display: block;
             background: rgba(239, 68, 68, 0.1);
@@ -380,8 +373,95 @@
             font-weight: 500;
         }
 
+        /* === ÉCRAN DE CONFIRMATION === */
+        .confirm-card {
+            background: rgba(19, 19, 26, 0.6);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(167, 139, 250, 0.15);
+            border-radius: 24px;
+            padding: 3rem 2rem;
+            text-align: center;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+            display: none;
+            animation: fadeIn 0.6s ease-out;
+        }
+
+        .confirm-card.visible {
+            display: block;
+        }
+
+        .confirm-icon {
+            width: 64px;
+            height: 64px;
+            margin: 0 auto 1.5rem;
+            background: rgba(167, 139, 250, 0.1);
+            border: 1px solid rgba(167, 139, 250, 0.2);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            animation: popIn 0.5s cubic-bezier(0.16, 1, 0.3, 1) 0.2s both;
+        }
+
+        @keyframes popIn {
+            from {
+                opacity: 0;
+                transform: scale(0.7);
+            }
+
+            to {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+
+        .confirm-icon svg {
+            width: 28px;
+            height: 28px;
+            stroke: var(--accent);
+        }
+
+        .confirm-title {
+            font-family: 'Syne', sans-serif;
+            font-weight: 700;
+            font-size: 1.5rem;
+            color: var(--text);
+            margin-bottom: 0.75rem;
+        }
+
+        .confirm-text {
+            font-size: 1rem;
+            font-weight: 300;
+            color: var(--text-mid);
+            line-height: 1.7;
+            margin-bottom: 2rem;
+        }
+
+        .confirm-again-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.7rem 1.4rem;
+            border-radius: 100px;
+            border: 1px solid rgba(167, 139, 250, 0.2);
+            background: transparent;
+            color: var(--text-dim);
+            font-family: 'Outfit', sans-serif;
+            font-size: 0.88rem;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .confirm-again-btn:hover {
+            border-color: rgba(167, 139, 250, 0.5);
+            color: var(--accent);
+            background: rgba(167, 139, 250, 0.05);
+        }
+
         @media (max-width: 480px) {
-            .form-card {
+
+            .form-card,
+            .confirm-card {
                 padding: 1.5rem;
             }
 
@@ -402,7 +482,8 @@
             <p class="description" id="desc"></p>
         </div>
 
-        <div class="form-card">
+        <!-- Formulaire -->
+        <div class="form-card" id="formCard">
             <form id="safeForm">
                 <div class="form-group">
                     <label for="pseudo" id="labelPseudo"></label>
@@ -440,6 +521,27 @@
             </form>
         </div>
 
+        <!-- Écran de confirmation (affiché après envoi) -->
+        <div class="confirm-card" id="confirmCard">
+            <div class="confirm-icon">
+                <svg viewBox="0 0 24 24" fill="none" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                    <path
+                        d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z">
+                    </path>
+                </svg>
+            </div>
+            <p class="confirm-title" id="confirmTitle"></p>
+            <p class="confirm-text" id="confirmText"></p>
+            <button class="confirm-again-btn" id="confirmAgainBtn">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                    stroke-linecap="round" stroke-linejoin="round">
+                    <polyline points="1 4 1 10 7 10"></polyline>
+                    <path d="M3.51 15a9 9 0 1 0 .49-3.62"></path>
+                </svg>
+                <span id="confirmAgainText"></span>
+            </button>
+        </div>
+
         <a href="index.html" class="back-link">
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
                 stroke-linecap="round" stroke-linejoin="round">
@@ -457,7 +559,7 @@
     </div>
 
     <script>
-        const WEBHOOK_URL = '/.netlify/functions/webhook'; // Redirige vers la fonction sécurisée sur le serveur Netlify
+        const WEBHOOK_URL = '/.netlify/functions/webhook';
 
         const savedLang = localStorage.getItem('barlog_lang');
         let isFr = savedLang ? savedLang === 'fr' : (navigator.language || 'en').startsWith('fr');
@@ -473,13 +575,15 @@
                 btnText: 'Envoyer',
                 backText: 'Retour à l\'accueil',
                 sending: 'Envoi en cours...',
-                success: 'Message envoyé avec succès. Merci d\'avoir partagé ça avec moi. ❤️',
                 error: 'Une erreur est survenue lors de l\'envoi. Réessaie plus tard.',
                 fileTooBig: 'Le fichier est trop lourd (max 8Mo).',
                 noWebhook: 'Erreur: L\'URL du Webhook n\'est pas configurée.',
                 anonymous: 'Anonyme',
                 msgPlaceholder: 'Écris ce que tu veux, ça restera entre nous...',
-                contactHint: 'Si tu préfères me parler directement, tu peux me retrouver sur Discord : <a href="https://discordid.netlify.app/?id=538342327387684865" target="_blank" rel="noopener">barlog.1pv</a> - je suis de bonne écoute et tout restera entre nous. 🤍'
+                contactHint: 'Si tu préfères me parler directement, tu peux me retrouver sur Discord : <a href="https://discordid.netlify.app/?id=538342327387684865" target="_blank" rel="noopener">barlog.1pv</a> - je suis de bonne écoute et tout restera entre nous. 🤍',
+                confirmTitle: 'Message reçu 🤍',
+                confirmText: 'Merci de m\'avoir fait confiance. Je lirai ça avec attention, et si tu m\'as laissé ton pseudo, je pourrai peut-être te répondre.',
+                confirmAgain: 'Envoyer un autre message',
             },
             en: {
                 title: 'Safe Space',
@@ -491,13 +595,15 @@
                 btnText: 'Send',
                 backText: 'Back to home',
                 sending: 'Sending...',
-                success: 'Message sent successfully. Thank you for sharing this with me. ❤️',
                 error: 'An error occurred while sending. Please try again later.',
                 fileTooBig: 'File is too large (max 8MB).',
                 noWebhook: 'Error: Webhook URL is not configured.',
                 anonymous: 'Anonymous',
                 msgPlaceholder: 'Write whatever you want, it stays between us...',
-                contactHint: 'If you\'d rather talk directly, you can find me on Discord: <a href="https://discordid.netlify.app/?id=538342327387684865" target="_blank" rel="noopener">barlog.1pv</a> - I\'m a good listener and everything stays between us. 🤍'
+                contactHint: 'If you\'d rather talk directly, you can find me on Discord: <a href="https://discordid.netlify.app/?id=538342327387684865" target="_blank" rel="noopener">barlog.1pv</a> - I\'m a good listener and everything stays between us. 🤍',
+                confirmTitle: 'Message received 🤍',
+                confirmText: 'Thank you for trusting me. I\'ll read it carefully, and if you left your pseudo, I might be able to get back to you.',
+                confirmAgain: 'Send another message',
             }
         };
 
@@ -514,8 +620,10 @@
             document.getElementById('langEn').className = isFr ? '' : 'active-lang';
             document.getElementById('html').lang = isFr ? 'fr' : 'en';
             document.getElementById('contactHint').innerHTML = l.contactHint;
-
             document.getElementById('message').placeholder = l.msgPlaceholder;
+            document.getElementById('confirmTitle').textContent = l.confirmTitle;
+            document.getElementById('confirmText').textContent = l.confirmText;
+            document.getElementById('confirmAgainText').textContent = l.confirmAgain;
 
             const fileInput = document.getElementById('fileInput');
             if (!fileInput.files.length) {
@@ -550,6 +658,31 @@
         const form = document.getElementById('safeForm');
         const status = document.getElementById('status');
         const submitBtn = document.getElementById('submitBtn');
+        const formCard = document.getElementById('formCard');
+        const confirmCard = document.getElementById('confirmCard');
+
+        function showConfirm() {
+            formCard.style.transition = 'opacity 0.4s ease, transform 0.4s ease';
+            formCard.style.opacity = '0';
+            formCard.style.transform = 'translateY(-10px)';
+            setTimeout(() => {
+                formCard.style.display = 'none';
+                confirmCard.classList.add('visible');
+            }, 400);
+        }
+
+        function showForm() {
+            confirmCard.classList.remove('visible');
+            formCard.style.display = 'block';
+            setTimeout(() => {
+                formCard.style.opacity = '1';
+                formCard.style.transform = 'translateY(0)';
+            }, 10);
+        }
+
+        document.getElementById('confirmAgainBtn').addEventListener('click', () => {
+            showForm();
+        });
 
         form.addEventListener('submit', async (e) => {
             e.preventDefault();
@@ -590,11 +723,10 @@
                 });
 
                 if (response.ok) {
-                    status.textContent = l.success;
-                    status.className = 'status-msg success';
                     form.reset();
                     document.getElementById('fileText').textContent = l.fileText + ' (max 8Mo)';
                     document.getElementById('fileText').style.color = 'var(--text-dim)';
+                    showConfirm();
                 } else {
                     throw new Error();
                 }
@@ -607,7 +739,7 @@
             }
         });
 
-        // Particules simples pour le fond
+        // Particules
         const canvas = document.getElementById('particles');
         const ctx = canvas.getContext('2d');
         let particles = [];
