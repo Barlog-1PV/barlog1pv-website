@@ -195,19 +195,18 @@
     const bsod = document.getElementById('bsod');
 
     let isProcessing = false;
-    let loginState = 'none'; // 'none', 'waiting_user', 'waiting_pass'
+    let loginState = 'none'; 
 
-    // --- CONFIGURATION ANTI-SPAM ---
+
     let commandTimestamps = [];
-    const SPAM_LIMIT = 5; // Nombre max de commandes
-    const SPAM_WINDOW_MS = 2000; // En 2 secondes (2000ms)
+    const SPAM_LIMIT = 5; 
+    const SPAM_WINDOW_MS = 2000; 
 
-    // Focus input anywhere clicked
+
     document.addEventListener('click', () => {
         if (!isProcessing) input.focus();
     });
 
-    // Handle Enter key
     input.addEventListener('keydown', async (e) => {
         if (e.key === 'Enter' && !isProcessing) {
             const command = input.value;
@@ -227,7 +226,6 @@
     function printPromptLine(cmd) {
         const promptStr = `<span class="prompt"><span class="user">guest</span><span class="at">@</span><span class="host">barlog1pv.fr</span><span class="colon">:</span><span class="path">~</span><span class="char">$</span></span>`;
         
-        // Si c'est le mot de passe, on affiche des astérisques dans l'historique du terminal
         let displayedCmd = cmd;
         if (loginState === 'waiting_pass') {
             displayedCmd = '*'.repeat(cmd.length);
@@ -258,40 +256,33 @@
         }
     }
 
-    // Fonction globale pour intercepter et gérer le spam avant de traiter la commande
     async function handleCommandInput(command) {
         isProcessing = true;
         input.disabled = true;
 
-        // Gestion du timing Anti-Spam (uniquement hors phase de login)
         if (loginState === 'none') {
             const now = Date.now();
             commandTimestamps.push(now);
-            // On ne garde que les timestamps dans la fenêtre des 2 secondes
             commandTimestamps = commandTimestamps.filter(time => now - time < SPAM_WINDOW_MS);
 
             if (commandTimestamps.length > SPAM_LIMIT) {
                 await triggerSpamTroll();
-                commandTimestamps = []; // Reset du compteur après le troll
+                commandTimestamps = []; 
                 finishCommand();
                 return;
             }
         }
 
-        // Affichage de la ligne dans le terminal
         printPromptLine(command);
 
-        // Continuer vers le traitement de la commande
         await processCommand(command);
     }
 
-    // LE TROLL ANTI-SPAM
     async function triggerSpamTroll() {
         printLine("!! ANTI-SPAM SYSTEM TRIGGERED !!", "error");
         await sleep(400);
         printLine("CRITICAL ERROR: CPU OVERHEATING DUE TO USER STUPIDITY.", "error");
         
-        // Effet visuel : Flash rouge sur le terminal
         terminal.style.transition = "background-color 0.1s";
         for(let i=0; i<3; i++) {
             terminal.style.backgroundColor = "rgba(239, 68, 68, 0.4)";
@@ -303,7 +294,6 @@
 
         printLine("Initiating emergency cooling sequence... Please wait.", "dim");
         
-        // Fausse barre de chargement de refroidissement
         const cooldownLine = document.createElement('div');
         cooldownLine.className = 'output-line dim';
         output.appendChild(cooldownLine);
@@ -323,11 +313,10 @@
             return;
         }
 
-        // STATE MACHINE POUR LE LOGIN
         if (loginState === 'waiting_user') {
             loginState = 'waiting_pass';
             document.getElementById('prompt-display').innerText = 'Password: ';
-            input.type = 'password'; // <- ICI : On passe l'input en mode password pour masquer la saisie !
+            input.type = 'password'; 
             isProcessing = false;
             input.disabled = false;
             input.focus();
@@ -338,7 +327,7 @@
             await sleep(800);
             printLine("Access denied. Your IP address (127.0.0.1) has been logged and transmitted to the intergalactic authorities.", "error");
             loginState = 'none';
-            input.type = 'text'; // <- On repasse en mode texte normal
+            input.type = 'text'; 
             finishCommand();
             return;
         }
@@ -347,7 +336,6 @@
         const baseCmd = args[0].toLowerCase();
         const fullArgs = args.slice(1).join(' ');
 
-        // SQL INJECTION TROLL TRAP
         if ((cmd.includes("' OR 1=1") || cmd.toUpperCase().includes("DROP TABLE") || cmd.toUpperCase().includes("DROP DATABASE") || cmd.includes("--")) && !cmd.toLowerCase().startsWith('barlog')) {
             printLine("A SQL injection? On a static HTML site with no database? Go back and review your cybersecurity basics, champion.", "error");
             finishCommand();
@@ -540,7 +528,6 @@
         document.getElementById('prompt-display').innerHTML = `<span class="user">guest</span><span class="at">@</span><span class="host">barlog1pv.fr</span><span class="colon">:</span><span class="path">~</span><span class="char">$</span>`;
     }
 
-    // --- MATRIX EFFECT CANVAS ---
     async function runMatrixEffect() {
         const canvas = document.getElementById('matrix-canvas');
         const ctx = canvas.getContext('2d');
