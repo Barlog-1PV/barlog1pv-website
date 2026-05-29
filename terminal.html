@@ -1,0 +1,579 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Terminal — Barlog.1PV</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500&family=Outfit:wght@300;400;500&display=swap" rel="stylesheet">
+
+    <style>
+        *, *::before, *::after {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --bg: #09090b;
+            --text: #e4e4e7;
+            --text-dim: #71717a;
+            --accent: #a78bfa;
+            --accent-glow: rgba(167, 139, 250, 0.15);
+            --red: #ef4444;
+            --green: #22c55e;
+            --prompt-user: #38bdf8;
+            --prompt-host: #a78bfa;
+            --prompt-path: #fbbf24;
+        }
+
+        /* LIGHT THEME */
+        body.theme-light {
+            --bg: #f4f4f5;
+            --text: #18181b;
+            --text-dim: #52525b;
+            --accent: #7c3aed;
+            --accent-glow: rgba(124, 58, 237, 0.1);
+            --prompt-user: #0284c7;
+            --prompt-host: #7c3aed;
+            --prompt-path: #d97706;
+        }
+
+        /* MATRIX THEME */
+        body.theme-matrix {
+            --bg: #000000;
+            --text: #00ff00;
+            --text-dim: #008800;
+            --accent: #00ff00;
+            --accent-glow: rgba(0, 255, 0, 0.1);
+            --prompt-user: #00ff00;
+            --prompt-host: #00ff00;
+            --prompt-path: #00ff00;
+        }
+
+        html, body {
+            height: 100%;
+            background: var(--bg);
+            color: var(--text);
+            font-family: 'Fira Code', monospace;
+            font-size: 15px;
+            overflow: hidden;
+            transition: background-color 0.3s, color 0.3s;
+        }
+
+        .glow {
+            position: fixed;
+            width: 600px;
+            height: 600px;
+            border-radius: 50%;
+            background: radial-gradient(circle, var(--accent-glow) 0%, transparent 70%);
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 0;
+            pointer-events: none;
+        }
+
+        #terminal {
+            position: relative;
+            z-index: 1;
+            height: 100vh;
+            padding: 2rem;
+            display: flex;
+            flex-direction: column;
+            overflow-y: auto;
+            scroll-behavior: smooth;
+        }
+
+        /* Scrollbar styling */
+        #terminal::-webkit-scrollbar { width: 8px; }
+        #terminal::-webkit-scrollbar-track { background: transparent; }
+        #terminal::-webkit-scrollbar-thumb { background: var(--text-dim); border-radius: 4px; }
+
+        .output-line {
+            margin-bottom: 0.5rem;
+            line-height: 1.5;
+            word-wrap: break-word;
+            white-space: pre-wrap;
+        }
+
+        .input-line {
+            display: flex;
+            align-items: center;
+            margin-top: 0.5rem;
+            padding-bottom: 2rem;
+        }
+
+        .prompt {
+            white-space: pre;
+            margin-right: 0.5rem;
+            user-select: none;
+        }
+
+        .prompt .user { color: var(--prompt-user); font-weight: 500; }
+        .prompt .at { color: var(--text); }
+        .prompt .host { color: var(--prompt-host); font-weight: 500; }
+        .prompt .colon { color: var(--text); }
+        .prompt .path { color: var(--prompt-path); font-weight: 500; }
+        .prompt .char { color: var(--text); }
+
+        #cmd-input {
+            background: transparent;
+            border: none;
+            color: var(--text);
+            font-family: 'Fira Code', monospace;
+            font-size: 15px;
+            flex-grow: 1;
+            outline: none;
+            caret-color: var(--accent);
+        }
+
+        /* BSOD Overlay */
+        #bsod {
+            position: fixed;
+            inset: 0;
+            background: #0000aa;
+            color: white;
+            font-family: 'Courier New', Courier, monospace;
+            z-index: 100;
+            display: none;
+            padding: 5rem 10%;
+            font-size: 1.2rem;
+        }
+
+        /* Matrix Overlay */
+        #matrix-canvas {
+            position: fixed;
+            inset: 0;
+            z-index: 50;
+            display: none;
+            background: black;
+        }
+
+        .error { color: var(--red); }
+        .success { color: var(--green); }
+        .dim { color: var(--text-dim); }
+        .ascii { font-size: 12px; line-height: 1.2; }
+    </style>
+</head>
+<body>
+    <div class="glow"></div>
+
+    <canvas id="matrix-canvas"></canvas>
+
+    <div id="bsod">
+        <p style="background: white; color: #0000aa; display: inline-block; padding: 0 0.5rem;">Windows</p>
+        <br><br>
+        <p>A fatal exception 0E has occurred at 0152:BFF9B3D4 in VxD.</p>
+        <p>The current application will be terminated.</p>
+        <br>
+        <p>* Press any key to terminate the current application.</p>
+        <p>* Press CTRL+ALT+DEL again to restart your computer. You will lose any unsaved information in all applications.</p>
+        <br><br>
+        <p style="text-align: center;">Press any key to continue _</p>
+    </div>
+
+    <div id="terminal">
+        <div id="output">
+            <div class="output-line">Welcome to Barlog.1PV Terminal.</div>
+            <div class="output-line dim">Type 'help' to see available commands.</div>
+            <br>
+        </div>
+        <div class="input-line" id="input-wrapper">
+            <span class="prompt" id="prompt-display"><span class="user">guest</span><span class="at">@</span><span class="host">barlog1pv.fr</span><span class="colon">:</span><span class="path">~</span><span class="char">$</span></span>
+            <input type="text" id="cmd-input" autocomplete="off" spellcheck="false" autofocus>
+        </div>
+    </div>
+
+    <script>
+    const terminal = document.getElementById('terminal');
+    const output = document.getElementById('output');
+    const input = document.getElementById('cmd-input');
+    const promptDisplay = document.getElementById('prompt-display');
+    const bsod = document.getElementById('bsod');
+
+    let isProcessing = false;
+    let loginState = 'none'; // 'none', 'waiting_user', 'waiting_pass'
+
+    // --- CONFIGURATION ANTI-SPAM ---
+    let commandTimestamps = [];
+    const SPAM_LIMIT = 5; // Nombre max de commandes
+    const SPAM_WINDOW_MS = 2000; // En 2 secondes (2000ms)
+
+    // Focus input anywhere clicked
+    document.addEventListener('click', () => {
+        if (!isProcessing) input.focus();
+    });
+
+    // Handle Enter key
+    input.addEventListener('keydown', async (e) => {
+        if (e.key === 'Enter' && !isProcessing) {
+            const command = input.value;
+            input.value = '';
+            await handleCommandInput(command);
+        }
+    });
+
+    function printLine(text, className = '') {
+        const line = document.createElement('div');
+        line.className = `output-line ${className}`;
+        line.innerHTML = text;
+        output.appendChild(line);
+        terminal.scrollTop = terminal.scrollHeight;
+    }
+
+    function printPromptLine(cmd) {
+        const promptStr = `<span class="prompt"><span class="user">guest</span><span class="at">@</span><span class="host">barlog1pv.fr</span><span class="colon">:</span><span class="path">~</span><span class="char">$</span></span>`;
+        
+        // Si c'est le mot de passe, on affiche des astérisques dans l'historique du terminal
+        let displayedCmd = cmd;
+        if (loginState === 'waiting_pass') {
+            displayedCmd = '*'.repeat(cmd.length);
+        }
+
+        if (loginState === 'none') {
+            printLine(`${promptStr}${displayedCmd}`);
+        } else if (loginState === 'waiting_user') {
+            printLine(`Username: ${displayedCmd}`);
+        } else if (loginState === 'waiting_pass') {
+            printLine(`Password: ${displayedCmd}`);
+        }
+    }
+
+    async function sleep(ms) {
+        return new Promise(resolve => setTimeout(resolve, ms));
+    }
+
+    async function typeWriter(text, className = '', speed = 30) {
+        const line = document.createElement('div');
+        line.className = `output-line ${className}`;
+        output.appendChild(line);
+        
+        for (let i = 0; i < text.length; i++) {
+            line.innerHTML += text.charAt(i);
+            terminal.scrollTop = terminal.scrollHeight;
+            await sleep(speed);
+        }
+    }
+
+    // Fonction globale pour intercepter et gérer le spam avant de traiter la commande
+    async function handleCommandInput(command) {
+        isProcessing = true;
+        input.disabled = true;
+
+        // Gestion du timing Anti-Spam (uniquement hors phase de login)
+        if (loginState === 'none') {
+            const now = Date.now();
+            commandTimestamps.push(now);
+            // On ne garde que les timestamps dans la fenêtre des 2 secondes
+            commandTimestamps = commandTimestamps.filter(time => now - time < SPAM_WINDOW_MS);
+
+            if (commandTimestamps.length > SPAM_LIMIT) {
+                await triggerSpamTroll();
+                commandTimestamps = []; // Reset du compteur après le troll
+                finishCommand();
+                return;
+            }
+        }
+
+        // Affichage de la ligne dans le terminal
+        printPromptLine(command);
+
+        // Continuer vers le traitement de la commande
+        await processCommand(command);
+    }
+
+    // LE TROLL ANTI-SPAM
+    async function triggerSpamTroll() {
+        printLine("!! ANTI-SPAM SYSTEM TRIGGERED !!", "error");
+        await sleep(400);
+        printLine("CRITICAL ERROR: CPU OVERHEATING DUE TO USER STUPIDITY.", "error");
+        
+        // Effet visuel : Flash rouge sur le terminal
+        terminal.style.transition = "background-color 0.1s";
+        for(let i=0; i<3; i++) {
+            terminal.style.backgroundColor = "rgba(239, 68, 68, 0.4)";
+            await sleep(150);
+            terminal.style.backgroundColor = "var(--bg)";
+            await sleep(150);
+        }
+        terminal.style.transition = "";
+
+        printLine("Initiating emergency cooling sequence... Please wait.", "dim");
+        
+        // Fausse barre de chargement de refroidissement
+        const cooldownLine = document.createElement('div');
+        cooldownLine.className = 'output-line dim';
+        output.appendChild(cooldownLine);
+        for (let i = 0; i <= 100; i += 10) {
+            cooldownLine.innerText = `Cooling down cores: [${'#'.repeat(i/10)}${'.'.repeat(10 - i/10)}] ${i}%`;
+            terminal.scrollTop = terminal.scrollHeight;
+            await sleep(400);
+        }
+        
+        printLine("Cores stabilized. Keyboard inputs re-enabled. Chill out, bro.", "success");
+    }
+
+    async function processCommand(rawCmd) {
+        const cmd = rawCmd.trim();
+        if (!cmd && loginState === 'none') {
+            finishCommand();
+            return;
+        }
+
+        // STATE MACHINE POUR LE LOGIN
+        if (loginState === 'waiting_user') {
+            loginState = 'waiting_pass';
+            document.getElementById('prompt-display').innerText = 'Password: ';
+            input.type = 'password'; // <- ICI : On passe l'input en mode password pour masquer la saisie !
+            isProcessing = false;
+            input.disabled = false;
+            input.focus();
+            return;
+        }
+        
+        if (loginState === 'waiting_pass') {
+            await sleep(800);
+            printLine("Access denied. Your IP address (127.0.0.1) has been logged and transmitted to the intergalactic authorities.", "error");
+            loginState = 'none';
+            input.type = 'text'; // <- On repasse en mode texte normal
+            finishCommand();
+            return;
+        }
+
+        const args = cmd.split(' ').filter(Boolean);
+        const baseCmd = args[0].toLowerCase();
+        const fullArgs = args.slice(1).join(' ');
+
+        // SQL INJECTION TROLL TRAP
+        if ((cmd.includes("' OR 1=1") || cmd.toUpperCase().includes("DROP TABLE") || cmd.toUpperCase().includes("DROP DATABASE") || cmd.includes("--")) && !cmd.toLowerCase().startsWith('barlog')) {
+            printLine("A SQL injection? On a static HTML site with no database? Go back and review your cybersecurity basics, champion.", "error");
+            finishCommand();
+            return;
+        }
+
+        switch (baseCmd) {
+            case 'help':
+                printLine("Available commands:");
+                printLine("  <span class='success'>clear, cls</span>   - Clear the terminal screen");
+                printLine("  <span class='success'>theme</span>        - Change theme [light/dark/matrix]");
+                printLine("  <span class='success'>cat</span>          - Display an ASCII cat");
+                printLine("  <span class='success'>hello, hi</span>    - Greeting sequence");
+                printLine("  <span class='success'>neofetch</span>     - Display system info");
+                printLine("  <span class='success'>whoami</span>       - Display current user");
+                printLine("  <span class='success'>ls, dir</span>      - List directory contents");
+                break;
+
+            case 'clear':
+            case 'cls':
+                output.innerHTML = '';
+                break;
+
+            case 'theme':
+                if (args[1] === 'light') {
+                    document.body.className = 'theme-light';
+                    printLine("Theme set to: light. My eyes are burning.");
+                } else if (args[1] === 'matrix') {
+                    document.body.className = 'theme-matrix';
+                    printLine("Theme set to: matrix. Hackerman mode engaged.");
+                } else if (args[1] === 'dark') {
+                    document.body.className = '';
+                    printLine("Theme set to: dark. Back to normal.");
+                } else {
+                    printLine("Usage: theme [light | dark | matrix]");
+                }
+                break;
+
+            case 'cat':
+                printLine(" /\\_/\\ ", "ascii");
+                printLine("( o.o )", "ascii");
+                printLine(" > ^ < ", "ascii");
+                break;
+
+            case 'neofetch':
+                const logo = `
+    <span class='prompt-user'>      ////</span>    <span class='prompt-host'>guest</span>@<span class='prompt-user'>barlog1pv.fr</span>
+    <span class='prompt-user'>    //////</span>    ------------------
+    <span class='prompt-user'>  ////////</span>    <span class='prompt-host'>OS</span>: Pop!_OS 22.04 LTS x86_64
+    <span class='prompt-user'>//////////</span>    <span class='prompt-host'>Host</span>: Web Terminal Virtual Machine
+    <span class='prompt-user'>\\\\\\\\\\\\\\\\\\\\</span>    <span class='prompt-host'>Kernel</span>: 6.9.0-vibe-coder
+    <span class='prompt-user'>  \\\\\\\\\\\\\\\\</span>    <span class='prompt-host'>Uptime</span>: 42 days, 13 hours
+    <span class='prompt-user'>    \\\\\\\\\\\\</span>    <span class='prompt-host'>Packages</span>: 404 (dpkg)
+    <span class='prompt-user'>      \\\\\\\\</span>    <span class='prompt-host'>Shell</span>: bash 5.1.16
+                `;
+                printLine(logo, "ascii");
+                break;
+
+            case 'whoami':
+                printLine("guest");
+                break;
+
+            case 'ls':
+            case 'dir':
+                printLine("<span class='prompt-path'>admin.html</span>  <span class='prompt-path'>index.html</span>  <span class='prompt-user'>src/</span>  <span class='dim'>.env (just kidding)</span>");
+                break;
+
+            case 'matrix':
+                printLine("Initializing matrix protocol...");
+                await runMatrixEffect();
+                printLine("Wake up, Neo...", "success");
+                break;
+
+            case 'sudo':
+                printLine(`guest is not in the sudoers file. This incident will be reported.`, "error");
+                break;
+
+            case 'coffee':
+            case 'beer':
+                if (baseCmd === 'coffee') {
+                    printLine("Error 418: I'm a teapot. Cannot brew coffee.");
+                } else {
+                    printLine("A virtual beer has been spilled on your keyboard. 🍺");
+                }
+                break;
+
+            case 'hello':
+            case 'hi':
+            case 'yo':
+                const greetings = ["Greetings, human.", "Who goes there?", "01001000 01000101 01001100 01001100 01001111", "Ah, a visitor. Don't break anything."];
+                printLine(greetings[Math.floor(Math.random() * greetings.length)]);
+                break;
+
+            case 'rickroll':
+                window.open('https://www.youtube.com/watch?v=dQw4w9WgXcQ', '_blank');
+                const lyrics = ["We're no strangers to love", "You know the rules and so do I", "A full commitment's what I'm thinking of", "You wouldn't get this from any other guy"];
+                for (let l of lyrics) {
+                    await typeWriter(l, 'dim', 15);
+                }
+                break;
+
+            case 'windows':
+                bsod.style.display = 'block';
+                await sleep(3000);
+                location.reload();
+                break;
+
+            case 'rm':
+                if (fullArgs === '-rf /' || fullArgs === '-rf /*') {
+                    await typeWriter("Deleting system files...", "error", 20);
+                    const deletingLine = document.createElement('div');
+                    deletingLine.className = "output-line error";
+                    output.appendChild(deletingLine);
+                    for(let i=0; i<20; i++) {
+                        deletingLine.innerHTML = `[${String(Math.floor(Math.random()*99999)).padStart(5, '0')}] Removing /usr/bin/sys...`;
+                        terminal.scrollTop = terminal.scrollHeight;
+                        await sleep(100);
+                    }
+                    await sleep(500);
+                    output.innerHTML = ''; 
+                    printLine("Just kidding. You can't delete a static website. Nice try though.", "success");
+                } else {
+                    printLine("rm: missing operand");
+                }
+                break;
+
+            case 'del':
+                printLine("This isn't MS-DOS. Use 'rm', but be careful...");
+                break;
+
+            case 'nmap':
+            case 'hack':
+                printLine("Starting Nmap 7.93 ( https://nmap.org )");
+                await sleep(500);
+                const progressLine = document.createElement('div');
+                progressLine.className = 'output-line';
+                output.appendChild(progressLine);
+                for(let i=1; i<=99; i+=Math.floor(Math.random()*15)+1) {
+                    if(i>99) i=99;
+                    progressLine.innerText = `Hacking NASA mainframes... ${i}%`;
+                    await sleep(300);
+                }
+                await sleep(1000);
+                printLine("Connection dropped. Reason: Your ADSL connection is too slow.", "error");
+                break;
+
+            case 'admin':
+            case 'login':
+                loginState = 'waiting_user';
+                document.getElementById('prompt-display').innerText = 'Username: ';
+                isProcessing = false;
+                input.disabled = false;
+                input.focus();
+                return;
+
+            case 'ping':
+                printLine("Pong. And toc. What did you expect?");
+                break;
+
+            case 'barlog':
+                if (fullArgs === '--hidden') {
+                    printLine("--- SECRET COMMANDS LIST ---", "success");
+                    printLine("Visible: help, clear, cls, theme, cat, hello, neofetch, whoami, ls");
+                    printLine("Secret: matrix, sudo, coffee, beer, rickroll, windows, ping, admin");
+                    printLine("Traps: rm -rf /, nmap, hack, sql injections, spamming");
+                } else {
+                    printLine(`${baseCmd}: command not found`);
+                }
+                break;
+
+            default:
+                printLine(`${baseCmd}: command not found`);
+                break;
+        }
+
+        if (loginState === 'none') {
+            finishCommand();
+        }
+    }
+
+    function finishCommand() {
+        resetPrompt();
+        isProcessing = false;
+        input.disabled = false;
+        input.focus();
+        terminal.scrollTop = terminal.scrollHeight;
+    }
+
+    function resetPrompt() {
+        document.getElementById('prompt-display').innerHTML = `<span class="user">guest</span><span class="at">@</span><span class="host">barlog1pv.fr</span><span class="colon">:</span><span class="path">~</span><span class="char">$</span>`;
+    }
+
+    // --- MATRIX EFFECT CANVAS ---
+    async function runMatrixEffect() {
+        const canvas = document.getElementById('matrix-canvas');
+        const ctx = canvas.getContext('2d');
+        canvas.style.display = 'block';
+        
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+        
+        const letters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789@#$%^&*'.split('');
+        const fontSize = 16;
+        const columns = canvas.width / fontSize;
+        const drops = [];
+        for (let x = 0; x < columns; x++) drops[x] = 1;
+        
+        const draw = () => {
+            ctx.fillStyle = 'rgba(0, 0, 0, 0.05)';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            ctx.fillStyle = '#0F0';
+            ctx.font = fontSize + 'px monospace';
+            
+            for (let i = 0; i < drops.length; i++) {
+                const text = letters[Math.floor(Math.random() * letters.length)];
+                ctx.fillText(text, i * fontSize, drops[i] * fontSize);
+                if (drops[i] * fontSize > canvas.height && Math.random() > 0.975) drops[i] = 0;
+                drops[i]++;
+            }
+        };
+        
+        const interval = setInterval(draw, 33);
+        await sleep(5000);
+        clearInterval(interval);
+        canvas.style.display = 'none';
+    }
+    </script>
+</body>
+</html>
