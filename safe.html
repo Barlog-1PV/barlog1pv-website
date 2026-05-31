@@ -47,7 +47,7 @@
             align-items: center;
             justify-content: center;
             min-height: 100vh;
-            padding: 2rem 1.5rem;
+            padding: 5rem 1.5rem 2rem;
             overflow-x: hidden;
             position: relative;
         }
@@ -314,22 +314,7 @@
             text-decoration: underline;
         }
 
-        .back-link {
-            display: inline-flex;
-            align-items: center;
-            gap: 0.5rem;
-            margin-top: 2rem;
-            color: var(--text-dim);
-            text-decoration: none;
-            font-size: 0.9rem;
-            transition: color 0.3s;
-        }
-
-        .back-link:hover {
-            color: var(--accent);
-        }
-
-        .status-msg {
+.status-msg {
             margin-top: 1rem;
             font-size: 0.9rem;
             padding: 0.8rem;
@@ -650,14 +635,7 @@
             </button>
         </div>
 
-        <a href="index.html" class="back-link">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-                stroke-linecap="round" stroke-linejoin="round">
-                <line x1="19" y1="12" x2="5" y2="12"></line>
-                <polyline points="12 19 5 12 12 5"></polyline>
-            </svg>
-            <span id="backText">Retour à l'accueil</span>
-        </a>
+
     </div>
 
     <div class="lang-switch" id="langSwitch">
@@ -681,7 +659,7 @@
                 labelFile: 'Un fichier ? (optionnel, max 8Mo)',
                 fileText: 'Choisir un fichier',
                 btnText: 'Envoyer',
-                backText: 'Retour à l\'accueil',
+
                 sending: 'Envoi en cours...',
                 error: 'Une erreur est survenue lors de l\'envoi. Réessaie plus tard.',
                 fileTooBig: 'Le fichier est trop lourd (max 8Mo).',
@@ -704,7 +682,7 @@
                 labelFile: 'A file? (optional, max 8MB)',
                 fileText: 'Choose a file',
                 btnText: 'Send',
-                backText: 'Back to home',
+
                 sending: 'Sending...',
                 error: 'An error occurred while sending. Please try again later.',
                 fileTooBig: 'File is too large (max 8MB).',
@@ -729,7 +707,7 @@
             document.getElementById('labelMsg').textContent = l.labelMsg;
             document.getElementById('labelFile').textContent = l.labelFile;
             document.getElementById('btnText').textContent = l.btnText;
-            document.getElementById('backText').textContent = l.backText;
+
             document.getElementById('navHome').textContent = l.navHome;
             document.getElementById('navSafe').textContent = l.navSafe;
             document.getElementById('navGym').textContent = l.navGym;
