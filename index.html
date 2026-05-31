@@ -862,7 +862,6 @@
             text-shadow: 0 0 8px rgba(167, 139, 250, 0.3);
         }
 
-        /* Hamburger — caché sur desktop */
         .nav-hamburger {
             display: none;
             align-items: center;
@@ -1216,7 +1215,6 @@
                 hour12: false
             }).format(now);
             
-            // Reliable offset calculation without Date string parsing
             const getHour = (tz) => parseInt(new Intl.DateTimeFormat('en-US', {
                 timeZone: tz, hour: 'numeric', hourCycle: 'h23'
             }).formatToParts(now).find(p => p.type === 'hour').value, 10);
@@ -1492,7 +1490,6 @@
             }
         });
 
-        // Hamburger mobile
         const topNav = document.getElementById('topNav');
         const navHamburger = document.getElementById('navHamburger');
 

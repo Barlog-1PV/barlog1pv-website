@@ -32,7 +32,6 @@
             --prompt-path: #fbbf24;
         }
 
-        /* LIGHT THEME */
         body.theme-light {
             --bg: #f4f4f5;
             --text: #18181b;
@@ -44,7 +43,6 @@
             --prompt-path: #d97706;
         }
 
-        /* MATRIX THEME */
         body.theme-matrix {
             --bg: #000000;
             --text: #00ff00;
@@ -90,7 +88,6 @@
             scroll-behavior: smooth;
         }
 
-        /* Scrollbar styling */
         #terminal::-webkit-scrollbar { width: 8px; }
         #terminal::-webkit-scrollbar-track { background: transparent; }
         #terminal::-webkit-scrollbar-thumb { background: var(--text-dim); border-radius: 4px; }
@@ -133,7 +130,6 @@
             caret-color: var(--accent);
         }
 
-        /* BSOD Overlay */
         #bsod {
             position: fixed;
             inset: 0;
@@ -146,7 +142,6 @@
             font-size: 1.2rem;
         }
 
-        /* Matrix Overlay */
         #matrix-canvas {
             position: fixed;
             inset: 0;
@@ -385,14 +380,12 @@
                 break;
 
             case 'neofetch':
-                // Calcul de l'uptime réel depuis le chargement de la page
                 const sessionStart = window.performance ? performance.now() : 0;
                 const uptimeSeconds = Math.floor(sessionStart / 1000);
                 const minutes = Math.floor(uptimeSeconds / 60);
                 const seconds = uptimeSeconds % 60;
                 const uptimeString = minutes > 0 ? `${minutes}m ${seconds}s` : `${seconds}s`;
 
-                // Détection basique du navigateur de l'invité
                 const userAgent = navigator.userAgent;
                 let browserName = "Unknown Browser";
                 if (userAgent.includes("Chrome")) browserName = "Chrome";
@@ -517,9 +510,9 @@
             case 'home':
             case 'nav':
                 printLine("── Navigation ──────────────────────", "dim");
-                printLine('<a href="index.html"  style="color:var(--accent);text-decoration:none;">→ index.html    </a> <span class="dim">Home</span>');
-                printLine('<a href="safe.html"   style="color:var(--accent);text-decoration:none;">→ safe.html     </a> <span class="dim">Safe Space</span>');
-                printLine('<a href="gym.html"    style="color:var(--accent);text-decoration:none;">→ gym.html      </a> <span class="dim">Gym Space</span>');
+                printLine('<a href="/"           style="color:var(--accent);text-decoration:none;">→ index.html    </a> <span class="dim">Home</span>');
+                printLine('<a href="/safe"       style="color:var(--accent);text-decoration:none;">→ safe.html     </a> <span class="dim">Safe Space</span>');
+                printLine('<a href="/gym"        style="color:var(--accent);text-decoration:none;">→ gym.html      </a> <span class="dim">Gym Space</span>');
                 printLine("────────────────────────────────────", "dim");
                 break;
 

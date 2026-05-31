@@ -106,7 +106,6 @@
             }
         }
 
-        /* NAVIGATION BAR */
         .top-nav {
             position: fixed;
             top: 1.5rem;
@@ -191,12 +190,11 @@
             .top-nav.open .nav-link { display: block; }
         }
 
-        /* CONTAINER DESIGN SYSTEM */
         .container {
             position: relative;
             z-index: 2;
             width: 100%;
-            max-width: 1400px; /* Expanded for full screen dashboard spacing */
+            max-width: 1400px;
             display: flex;
             flex-direction: column;
             gap: 2.5rem;
@@ -214,7 +212,6 @@
             }
         }
 
-        /* HEADER SECTION */
         .header {
             text-align: center;
             display: flex;
@@ -286,7 +283,6 @@
             margin: 0.5rem 0;
         }
 
-        /* IDENTITY STATS GRID */
         .identity-bar {
             display: grid;
             grid-template-columns: repeat(3, 1fr);
@@ -335,7 +331,6 @@
             text-shadow: 0 0 15px var(--accent-glow);
         }
 
-        /* DASHBOARD GRID - THREE COLUMNS FOR HIGH DENSITY MONITOR USE */
         .dashboard-grid {
             display: grid;
             grid-template-columns: 1.5fr 1fr 1fr;
@@ -392,14 +387,12 @@
             margin-top: 0.5rem;
         }
 
-        /* WEIGHT CHART ELEMENT */
         .chart-container {
             position: relative;
             width: 100%;
             height: 300px;
         }
 
-        /* WEIGHT HISTORY TABLE IN CHART CARD */
         .weight-history-card {
             border-top: 1px solid rgba(255, 255, 255, 0.05);
             padding-top: 1.2rem;
@@ -417,7 +410,6 @@
             background: rgba(9, 9, 11, 0.25);
         }
 
-        /* Custom Scrollbar */
         .weight-history-wrapper::-webkit-scrollbar {
             width: 6px;
         }
@@ -490,7 +482,6 @@
             height: 15px;
         }
 
-        /* FORMS */
         .form-row {
             display: flex;
             gap: 1rem;
@@ -575,7 +566,6 @@
             color: var(--warning);
         }
 
-        /* 1RM CALCULATOR DETAILS */
         .calculator-layout {
             display: flex;
             flex-direction: column;
@@ -648,7 +638,6 @@
             font-size: 0.8rem;
         }
 
-        /* MACROS VISUALIZATION */
         .macro-target {
             text-align: center;
             padding: 0.8rem 0;
@@ -735,7 +724,6 @@
             box-shadow: 0 0 10px rgba(251, 113, 133, 0.3);
         }
 
-        /* FOOTER & NAV BACK */
         .footer-nav {
             display: flex;
             flex-direction: column;
@@ -753,7 +741,6 @@
             text-transform: uppercase;
         }
 
-        /* FLOATING LANGUAGE SWITCHER */
         .lang-switch {
             position: fixed;
             bottom: 1.5rem;
@@ -785,7 +772,6 @@
             font-weight: 500;
         }
 
-        /* RESPONSIVE BREAKPOINTS */
         @media (max-width: 1200px) {
             .dashboard-grid {
                 grid-template-columns: 1.2fr 1fr;
@@ -836,7 +822,6 @@
     <canvas id="particles"></canvas>
     <div class="glow"></div>
 
-    <!-- TOP FLOATING NAVBAR -->
     <nav class="top-nav" id="topNav">
         <div class="nav-hamburger" id="navHamburger">
             <span>☰</span>
@@ -849,7 +834,6 @@
     </nav>
 
     <div class="container">
-        <!-- HEADER -->
         <header class="header">
             <h1 class="title" id="mainTitle">Gym Space</h1>
             <p class="slogan" id="warCry">Delenda est</p>
@@ -857,7 +841,6 @@
             <div class="line"></div>
         </header>
 
-        <!-- IDENTITY STATISTICS BAR -->
         <section class="identity-bar">
             <div class="stat-card">
                 <span class="label" id="labelStartWeight">Point de départ</span>
@@ -873,10 +856,8 @@
             </div>
         </section>
 
-        <!-- MAIN DASHBOARD CONTENT -->
         <div class="dashboard-grid">
             
-            <!-- PROGRESS TRACKING / WEIGHT CHART & HISTORY CARD (COLUMN 1 - LEFT) -->
             <section class="dashboard-card">
                 <div class="card-header">
                     <h2 class="card-title">
@@ -891,7 +872,6 @@
                     <canvas id="weightChart"></canvas>
                 </div>
 
-                <!-- ADD WEIGHT MEASUREMENT FORM -->
                 <form id="weightForm" class="form-row">
                     <div class="form-group">
                         <label for="weightDate" id="labelFormDate">Date de mesure</label>
@@ -910,7 +890,6 @@
                     </button>
                 </form>
                 
-                <!-- NEW WEIGHT ENTRIES HISTORY TABLE -->
                 <div class="weight-history-card">
                     <h3 class="card-subtitle" id="historyTitle">Historique des entrées</h3>
                     <div class="weight-history-wrapper">
@@ -923,7 +902,6 @@
                                 </tr>
                             </thead>
                             <tbody id="weightHistoryBody">
-                                <!-- Injected dynamically via JS -->
                             </tbody>
                         </table>
                     </div>
@@ -932,7 +910,6 @@
                 <button id="btnResetWeight" class="btn-danger-text">Réinitialiser l'historique complet</button>
             </section>
 
-            <!-- 1RM ESTIMATOR CARD (COLUMN 2 - RIGHT) -->
             <section class="dashboard-card">
                 <div class="card-header">
                     <h2 class="card-title">
@@ -960,7 +937,6 @@
                         <span class="sub" id="desc1RM">Force Max Estimée (Epley)</span>
                     </div>
 
-                    <!-- 1RM PERCENTAGES TABLE -->
                     <table class="percent-table">
                         <thead>
                             <tr>
@@ -970,13 +946,11 @@
                             </tr>
                         </thead>
                         <tbody id="percentTableBody">
-                            <!-- Injected dynamically via JS -->
                         </tbody>
                     </table>
                 </div>
             </section>
 
-            <!-- MACROS CALCULATOR CARD (COLUMN 3 - RIGHT) -->
             <section class="dashboard-card">
                 <div class="card-header">
                     <h2 class="card-title">
@@ -1008,9 +982,7 @@
                         <div class="label" id="labelKcalTarget">Cible Calorie Quotidiens</div>
                     </div>
 
-                    <!-- Macro Progress Bars -->
                     <div class="macros-bars">
-                        <!-- Proteins -->
                         <div class="macro-bar-group">
                             <div class="macro-bar-header">
                                 <span class="macro-name" id="macroNameProtein">Protéines (2.0g/kg)</span>
@@ -1021,7 +993,6 @@
                             </div>
                         </div>
 
-                        <!-- Carbs -->
                         <div class="macro-bar-group">
                             <div class="macro-bar-header">
                                 <span class="macro-name" id="macroNameCarbs">Glucides</span>
@@ -1047,13 +1018,11 @@
             </section>
         </div>
 
-        <!-- FOOTER -->
         <footer class="footer-nav">
             <div class="footer">barlog1pv.fr</div>
         </footer>
     </div>
 
-    <!-- LANG SWITCH -->
     <div class="lang-switch" id="langSwitch" title="Switch language">
         <span id="langFr">FR</span>
         <span>|</span>
@@ -1061,7 +1030,6 @@
     </div>
 
     <script>
-        // --- 1. CONFIGURATION DU BILINGUISME ---
         const savedLang = localStorage.getItem('barlog_lang');
         let isFr = savedLang ? savedLang === 'fr' : (navigator.language || 'en').startsWith('fr');
 
@@ -1160,7 +1128,6 @@
             const l = t();
             document.getElementById('html').lang = isFr ? 'fr' : 'en';
             
-            // Top Nav
             document.getElementById('navHome').textContent = l.navHome;
             document.getElementById('navSafe').textContent = l.navSafe;
             document.getElementById('navGym').textContent = l.navGym;
@@ -1173,7 +1140,6 @@
             document.getElementById('valLaunchDate').textContent = l.valLaunchDate;
             document.getElementById('labelCounter').textContent = l.labelCounter;
             
-            // Re-render Counter
             updateDayCounter();
 
             document.getElementById('chartCardTitle').textContent = l.chartCardTitle;
@@ -1182,7 +1148,6 @@
             document.getElementById('btnAddWeight').textContent = l.btnAddWeight;
             document.getElementById('btnResetWeight').textContent = l.btnResetWeight;
             
-            // History Headers
             document.getElementById('historyTitle').textContent = l.historyTitle;
             document.getElementById('thHistoryDate').textContent = l.thHistoryDate;
             document.getElementById('thHistoryWeight').textContent = l.thHistoryWeight;
@@ -1209,11 +1174,9 @@
             document.getElementById('macroNameCarbs').textContent = l.macroCarbs;
             document.getElementById('macroNameFats').textContent = l.macroFats;
 
-            // Lang Buttons
             document.getElementById('langFr').className = isFr ? 'active-lang' : '';
             document.getElementById('langEn').className = isFr ? '' : 'active-lang';
             
-            // Redraw chart labels and calculate utilities
             updateWeightChart();
             renderWeightHistory();
             calculate1RM();
@@ -1227,10 +1190,8 @@
         });
 
 
-        // --- 2. COMPTEUR DE JOURS AUTOMATIQUE ---
         function updateDayCounter() {
-            // Launch date is exactly May 30, 2026.
-            const launchDate = new Date(2026, 4, 30); // 0-indexed Month (4 = May)
+            const launchDate = new Date(2026, 4, 30); 
             const today = new Date();
             
             const d1 = new Date(launchDate.getFullYear(), launchDate.getMonth(), launchDate.getDate());
@@ -1243,12 +1204,10 @@
         }
 
 
-        // --- 3. GESTION DES DONNÉES DE POIDS & CHART ---
         const defaultWeights = [
             { date: '2026-05-30', weight: 86.0 }
         ];
 
-        // Retrieve logs from localStorage
         function getWeightLogs() {
             const logs = localStorage.getItem('barlog_gym_weights');
             if (!logs) {
@@ -1262,7 +1221,6 @@
             }
         }
 
-        // Set default date input value to today's date
         document.getElementById('weightDate').value = new Date().toISOString().substring(0, 10);
 
         let myChart = null;
@@ -1280,12 +1238,10 @@
             const canvas = document.getElementById('weightChart');
             const ctx = canvas.getContext('2d');
 
-            // Destroy previous chart if it exists to avoid visual bugs
             if (myChart !== null) {
                 myChart.destroy();
             }
 
-            // Create linear glow gradient for background fill
             const purpleGradient = ctx.createLinearGradient(0, 0, 0, canvas.height || 300);
             purpleGradient.addColorStop(0, 'rgba(167, 139, 250, 0.25)');
             purpleGradient.addColorStop(1, 'rgba(167, 139, 250, 0.00)');
@@ -1350,9 +1306,8 @@
             });
         }
 
-        // RENDER WEIGHT HISTORY TABLE
         function renderWeightHistory() {
-            const logs = getWeightLogs().sort((a, b) => new Date(b.date) - new Date(a.date)); // Latest first
+            const logs = getWeightLogs().sort((a, b) => new Date(b.date) - new Date(a.date));
             const body = document.getElementById('weightHistoryBody');
             body.innerHTML = '';
 
@@ -1384,11 +1339,9 @@
             });
         }
 
-        // DELETE SPECIFIC WEIGHT ENTRY
         function deleteWeightEntry(date) {
             let logs = getWeightLogs();
             
-            // Prevent deletion of initial launch point (30 May 2026)
             if (date === '2026-05-30') {
                 alert(isFr ? "Impossible de supprimer la mesure initiale de lancement." : "Cannot delete the initial launch entry.");
                 return;
@@ -1397,11 +1350,9 @@
             logs = logs.filter(entry => entry.date !== date);
             localStorage.setItem('barlog_gym_weights', JSON.stringify(logs));
             
-            // Update UI elements
             updateWeightChart();
             renderWeightHistory();
             
-            // Sync current weight input in Macros
             const latestLogs = [...logs].sort((a, b) => new Date(b.date) - new Date(a.date));
             if (latestLogs.length > 0) {
                 document.getElementById('macrosWeight').value = latestLogs[0].weight;
@@ -1409,7 +1360,6 @@
             }
         }
 
-        // Add Weight Entry Form Submission
         document.getElementById('weightForm').addEventListener('submit', (e) => {
             e.preventDefault();
             const dateVal = document.getElementById('weightDate').value;
@@ -1419,7 +1369,6 @@
 
             let logs = getWeightLogs();
             
-            // Check if date already exists, if so, replace it, otherwise add new
             const existingIdx = logs.findIndex(entry => entry.date === dateVal);
             if (existingIdx !== -1) {
                 logs[existingIdx].weight = weightVal;
@@ -1431,29 +1380,24 @@
             updateWeightChart();
             renderWeightHistory();
 
-            // Reset only weight input
             document.getElementById('weightValue').value = '';
             
-            // Dynamically sync bodyweight value in Macros Calculator!
             document.getElementById('macrosWeight').value = weightVal;
             calculateMacros();
         });
 
-        // Reset weights data
         document.getElementById('btnResetWeight').addEventListener('click', () => {
             if (confirm(t().resetWarning)) {
                 localStorage.removeItem('barlog_gym_weights');
                 updateWeightChart();
                 renderWeightHistory();
                 
-                // Sync weight back to starting weight in input
                 document.getElementById('macrosWeight').value = 86;
                 calculateMacros();
             }
         });
 
 
-        // --- 4. CALCULATEUR DE 1RM ---
         const weight1RMFld = document.getElementById('weight1RM');
         const reps1RMFld = document.getElementById('reps1RM');
 
@@ -1463,13 +1407,10 @@
 
             if (isNaN(w) || isNaN(r) || w <= 0 || r <= 0) return;
 
-            // Epley Formula: 1RM = w * (1 + r/30)
             const epley1RM = w * (1 + r / 30);
             
-            // Display main result
             document.getElementById('val1RM').textContent = `${epley1RM.toFixed(1)} kg`;
 
-            // Draw percentages table
             const tableBody = document.getElementById('percentTableBody');
             tableBody.innerHTML = '';
 
@@ -1499,8 +1440,6 @@
         weight1RMFld.addEventListener('input', calculate1RM);
         reps1RMFld.addEventListener('input', calculate1RM);
 
-
-        // --- 5. CALCULATEUR DE MACROS ---
         const macrosWeightFld = document.getElementById('macrosWeight');
         const macrosGoalFld = document.getElementById('macrosGoal');
 
@@ -1510,7 +1449,6 @@
 
             if (isNaN(weight) || weight <= 0) return;
 
-            // Calorie Formula base estimate: weight * 35 (active baseline factor)
             let dailyKcalBase = weight * 35;
             
             if (goal === 'cut') {
@@ -1522,25 +1460,19 @@
             const totalKcal = Math.round(dailyKcalBase);
             document.getElementById('kcalTarget').textContent = t().kcalTarget(totalKcal);
 
-            // Ratios:
-            // Protein: 2.0g per kg of bodyweight (4 kcal/g)
             const proteinG = Math.round(weight * 2.0);
             const proteinKcal = proteinG * 4;
 
-            // Fats: 0.9g per kg of bodyweight (9 kcal/g)
             const fatsG = Math.round(weight * 0.9);
             const fatsKcal = fatsG * 9;
 
-            // Carbs: The remainder of calories allocated to carbs (4 kcal/g)
             const carbsKcal = Math.max(0, totalKcal - (proteinKcal + fatsKcal));
             const carbsG = Math.round(carbsKcal / 4);
 
-            // Inject values
             document.getElementById('valProtein').innerHTML = `${proteinG} g <span>(${proteinKcal} kcal)</span>`;
             document.getElementById('valCarbs').innerHTML = `${carbsG} g <span>(${carbsKcal} kcal)</span>`;
             document.getElementById('valFats').innerHTML = `${fatsG} g <span>(${fatsKcal} kcal)</span>`;
 
-            // Animate progress fills based on calorie share percentage
             const pctProtein = Math.max(10, Math.min(100, (proteinKcal / totalKcal) * 100));
             const pctCarbs = Math.max(10, Math.min(100, (carbsKcal / totalKcal) * 100));
             const pctFats = Math.max(10, Math.min(100, (fatsKcal / totalKcal) * 100));
@@ -1553,8 +1485,6 @@
         macrosWeightFld.addEventListener('input', calculateMacros);
         macrosGoalFld.addEventListener('change', calculateMacros);
 
-
-        // --- 6. PARTICULES CANVAS ARRIÈRE-PLAN ---
         const canvas = document.getElementById('particles');
         const ctx = canvas.getContext('2d');
         let particles = [];
@@ -1607,19 +1537,14 @@
         animate();
 
 
-        // --- 7. INITIALISATION GLOBALE ---
-        // Synchronize weight from localStorage if it contains logged entries
         const initialLogs = getWeightLogs();
         if (initialLogs.length > 0) {
-            // Put latest weight entry as current weight inside Macronutrients calculator
             const sortedLogs = [...initialLogs].sort((a, b) => new Date(b.date) - new Date(a.date));
             document.getElementById('macrosWeight').value = sortedLogs[0].weight;
         }
 
-        // Apply translations on load
         applyLang();
 
-        // Hamburger mobile
         const topNav = document.getElementById('topNav');
         const navHamburger = document.getElementById('navHamburger');
         navHamburger.addEventListener('click', (e) => {
