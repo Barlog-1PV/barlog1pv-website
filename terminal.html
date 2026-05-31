@@ -3,6 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" type="image/png" sizes="32x32" href="favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="favicon-16x16.png">
+    <link rel="icon" href="favicon.ico">
     <title>Terminal — Barlog.1PV</title>
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -346,6 +349,7 @@
             case 'help':
                 printLine("Available commands:");
                 printLine("  <span class='success'>clear, cls</span>   - Clear the terminal screen");
+                printLine("  <span class='success'>home, nav</span>    - Display navigation options");
                 printLine("  <span class='success'>theme</span>        - Change theme [light/dark/matrix]");
                 printLine("  <span class='success'>cat</span>          - Display an ASCII cat");
                 printLine("  <span class='success'>hello, hi</span>    - Greeting sequence");
@@ -381,16 +385,31 @@
                 break;
 
             case 'neofetch':
+                // Calcul de l'uptime réel depuis le chargement de la page
+                const sessionStart = window.performance ? performance.now() : 0;
+                const uptimeSeconds = Math.floor(sessionStart / 1000);
+                const minutes = Math.floor(uptimeSeconds / 60);
+                const seconds = uptimeSeconds % 60;
+                const uptimeString = minutes > 0 ? `${minutes}m ${seconds}s` : `${seconds}s`;
+
+                // Détection basique du navigateur de l'invité
+                const userAgent = navigator.userAgent;
+                let browserName = "Unknown Browser";
+                if (userAgent.includes("Chrome")) browserName = "Chrome";
+                else if (userAgent.includes("Firefox")) browserName = "Firefox";
+                else if (userAgent.includes("Safari")) browserName = "Safari";
+
                 const logo = `
-    <span class='prompt-user'>      ////</span>    <span class='prompt-host'>guest</span>@<span class='prompt-user'>barlog1pv.fr</span>
-    <span class='prompt-user'>    //////</span>    ------------------
-    <span class='prompt-user'>  ////////</span>    <span class='prompt-host'>OS</span>: Pop!_OS 22.04 LTS x86_64
-    <span class='prompt-user'>//////////</span>    <span class='prompt-host'>Host</span>: Web Terminal Virtual Machine
-    <span class='prompt-user'>\\\\\\\\\\\\\\\\\\\\</span>    <span class='prompt-host'>Kernel</span>: 6.9.0-vibe-coder
-    <span class='prompt-user'>  \\\\\\\\\\\\\\\\</span>    <span class='prompt-host'>Uptime</span>: 42 days, 13 hours
-    <span class='prompt-user'>    \\\\\\\\\\\\</span>    <span class='prompt-host'>Packages</span>: 404 (dpkg)
-    <span class='prompt-user'>      \\\\\\\\</span>    <span class='prompt-host'>Shell</span>: bash 5.1.16
+                <span class='prompt-user'>      ////</span>    <span class='prompt-host'>guest</span>@<span class='prompt-user'>barlog1pv.fr</span>
+                <span class='prompt-user'>    //////</span>    ------------------
+                <span class='prompt-user'>  ////////</span>    <span class='prompt-host'>OS</span>: BarlogOS (Web-CLI)
+                <span class='prompt-user'>//////////</span>    <span class='prompt-host'>Host</span>: ${browserName} Engine
+                <span class='prompt-user'>\\\\\\\\\\\\\\\\\\\\</span>    <span class='prompt-host'>Resolution</span>: ${window.screen.width}x${window.screen.height}
+                <span class='prompt-user'>  \\\\\\\\\\\\\\\\</span>    <span class='prompt-host'>Uptime</span>: ${uptimeString}
+                <span class='prompt-user'>    \\\\\\\\\\\\</span>    <span class='prompt-host'>Terminal</span>: Native JS Terminal
+                <span class='prompt-user'>      \\\\\\\\</span>    <span class='prompt-host'>Stack</span>: HTML5 / CSS3 / Node.js
                 `;
+                
                 printLine(logo, "ascii");
                 break;
 
@@ -493,6 +512,15 @@
 
             case 'ping':
                 printLine("Pong. And toc. What did you expect?");
+                break;
+
+            case 'home':
+            case 'nav':
+                printLine("── Navigation ──────────────────────", "dim");
+                printLine('<a href="index.html"  style="color:var(--accent);text-decoration:none;">→ index.html    </a> <span class="dim">Home</span>');
+                printLine('<a href="safe.html"   style="color:var(--accent);text-decoration:none;">→ safe.html     </a> <span class="dim">Safe Space</span>');
+                printLine('<a href="gym.html"    style="color:var(--accent);text-decoration:none;">→ gym.html      </a> <span class="dim">Gym Space</span>');
+                printLine("────────────────────────────────────", "dim");
                 break;
 
             case 'barlog':

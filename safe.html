@@ -483,12 +483,106 @@
                 font-size: 2.5rem;
             }
         }
+        .top-nav {
+            position: fixed;
+            top: 1.5rem;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 1.5rem;
+            z-index: 100;
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            background: rgba(19, 19, 26, 0.45);
+            border: 1px solid rgba(167, 139, 250, 0.08);
+            padding: 0.5rem 1.6rem;
+            border-radius: 100px;
+            transition: all 0.3s;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+        }
+
+        .top-nav:hover {
+            border-color: rgba(167, 139, 250, 0.25);
+            box-shadow: 0 8px 30px rgba(167, 139, 250, 0.08);
+        }
+
+        .nav-link {
+            color: var(--text-dim);
+            text-decoration: none;
+            font-size: 0.85rem;
+            font-weight: 400;
+            transition: all 0.3s;
+            position: relative;
+        }
+
+        .nav-link:hover, .nav-link.active {
+            color: var(--accent);
+            text-shadow: 0 0 8px rgba(167, 139, 250, 0.3);
+        }
+
+        .nav-hamburger {
+            display: none;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.45rem 1.1rem;
+            cursor: pointer;
+            color: var(--text-dim);
+            font-size: 1rem;
+            transition: color 0.3s;
+            user-select: none;
+            white-space: nowrap;
+        }
+
+        .nav-hamburger:hover { color: var(--accent); }
+
+        .nav-hamburger-label {
+            font-size: 0.8rem;
+            font-weight: 400;
+            letter-spacing: 0.03em;
+        }
+
+        @media (max-width: 768px) {
+            .top-nav {
+                position: fixed;
+                top: 0.75rem;
+                left: 50%;
+                transform: translateX(-50%);
+                flex-direction: column;
+                align-items: stretch;
+                padding: 0;
+                gap: 0;
+                border-radius: 14px;
+                overflow: hidden;
+                width: auto;
+                min-width: 150px;
+            }
+            .nav-hamburger { display: flex; }
+            .top-nav .nav-link {
+                display: none;
+                padding: 0.6rem 1.4rem;
+                font-size: 0.85rem;
+                border-top: 1px solid rgba(167, 139, 250, 0.08);
+                text-align: center;
+            }
+            .top-nav.open .nav-link { display: block; }
+        }
     </style>
 </head>
 
 <body>
     <canvas id="particles"></canvas>
     <div class="glow"></div>
+
+    <nav class="top-nav" id="topNav">
+        <div class="nav-hamburger" id="navHamburger">
+            <span>☰</span>
+            <span class="nav-hamburger-label">Menu</span>
+        </div>
+        <a href="index.html" class="nav-link" id="navHome"></a>
+        <a href="safe.html" class="nav-link active" id="navSafe"></a>
+        <a href="gym.html" class="nav-link" id="navGym"></a>
+        <a href="terminal.html" class="nav-link" id="navTerminal"></a>
+    </nav>
 
     <div class="container" id="content">
         <div class="header">
@@ -598,6 +692,10 @@
                 confirmTitle: 'Message reçu 🤍',
                 confirmText: 'Merci de m\'avoir fait confiance. Je lirai ça avec attention, et si tu m\'as laissé ton pseudo, je pourrai peut-être te répondre.',
                 confirmAgain: 'Envoyer un autre message',
+                navHome: 'Accueil',
+                navSafe: 'Safe Space',
+                navGym: 'Espace Gym',
+                navTerminal: 'Terminal',
             },
             en: {
                 title: 'Safe Space',
@@ -617,6 +715,10 @@
                 confirmTitle: 'Message received 🤍',
                 confirmText: 'Thank you for trusting me. I\'ll read it carefully, and if you left your pseudo, I might be able to get back to you.',
                 confirmAgain: 'Send another message',
+                navHome: 'Home',
+                navSafe: 'Safe Space',
+                navGym: 'Gym Space',
+                navTerminal: 'Terminal',
             }
         };
 
@@ -629,6 +731,10 @@
             document.getElementById('labelFile').textContent = l.labelFile;
             document.getElementById('btnText').textContent = l.btnText;
             document.getElementById('backText').textContent = l.backText;
+            document.getElementById('navHome').textContent = l.navHome;
+            document.getElementById('navSafe').textContent = l.navSafe;
+            document.getElementById('navGym').textContent = l.navGym;
+            document.getElementById('navTerminal').textContent = l.navTerminal;
             document.getElementById('langFr').className = isFr ? 'active-lang' : '';
             document.getElementById('langEn').className = isFr ? '' : 'active-lang';
             document.getElementById('html').lang = isFr ? 'fr' : 'en';
@@ -818,6 +924,17 @@
         init();
         animate();
         updateLang();
+
+        // Hamburger mobile
+        const topNav = document.getElementById('topNav');
+        const navHamburger = document.getElementById('navHamburger');
+        navHamburger.addEventListener('click', (e) => {
+            e.stopPropagation();
+            topNav.classList.toggle('open');
+        });
+        document.addEventListener('click', (e) => {
+            if (!topNav.contains(e.target)) topNav.classList.remove('open');
+        });
     </script>
 </body>
 
