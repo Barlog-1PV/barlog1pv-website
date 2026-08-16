@@ -1334,6 +1334,8 @@
         const activityDetails = document.getElementById('activityDetails');
         const activityState = document.getElementById('activityState');
         const activityTime = document.getElementById('activityTime');
+        const IGNORED_ACTIVITY_NAMES = ['barlog1pv.fr', 'barlog1pv'];
+        const IGNORED_ACTIVITY_DETAILS = ['self-taught developer'];
 
         function getActivityImg(activity) {
             const img = activity.assets?.large_image;
@@ -1360,8 +1362,18 @@
             return t().elapsed(hrs, mins % 60);
         }
 
+        function normalizeActivityText(value) {
+            return String(value || '').trim().toLowerCase();
+        }
+
+        function isIgnoredActivity(activity) {
+            const name = normalizeActivityText(activity.name);
+            const details = normalizeActivityText(activity.details);
+            return IGNORED_ACTIVITY_NAMES.includes(name) || IGNORED_ACTIVITY_DETAILS.includes(details);
+        }
+
         function updateActivity(data) {
-            const activity = data.activities?.find(a => a.type !== 4 && a.type !== 2);
+            const activity = data.activities?.find(a => a.type !== 4 && a.type !== 2 && !isIgnoredActivity(a));
             if (!activity) {
                 activityEl.classList.remove('visible');
                 return;
