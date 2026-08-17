@@ -2,7 +2,7 @@ const { Buffer } = require('buffer');
 const Busboy = require('busboy');
 
 const WINDOW_MS = 5 * 60 * 1000;
-const MAX_REQUESTS = 1;
+const MAX_REQUESTS = 3;
 
 const rateLimitStore = new Map();
 
